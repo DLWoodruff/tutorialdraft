@@ -1,0 +1,20 @@
+
+
+Welcome to Pyomo Fundamentals's documentation!
+==============================================
+______________________________________________
+
+.. figure:: /_static/pyomo.png
+   :width:  200px
+   :height: 130px
+
+| 
+| 
+| 
+| 
+| 
+
+.. toctree::
+   :maxdepth: 0
+
+   pyomot_fundamentals/previous.rst

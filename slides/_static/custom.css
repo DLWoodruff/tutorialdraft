@@ -1,0 +1,70 @@
+article h1 {
+    text-align: center;
+    font-size: 25px;
+    margin: 1px;
+    padding: 2px;
+}
+
+article ul {
+    color: black;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+    margin: 1px;
+    margin-left: 3px;
+    padding: 1px;
+    display: inline-box;
+}
+
+/* image and latex */
+article img {
+    float: left;
+    font-size: 20px;
+    margin: 45px;
+    margin-right: 1px;
+    padding: 0px;
+    width: 25%;
+    display: inline-box;
+}
+
+/* table and code */
+article table {
+  float: right;
+  width: 50%;
+  font-size: 15px;
+  margin: 10px;
+  padding: 0px;
+  display: inline-box;
+}
+
+/*stripped table format
+article tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+*/
+
+article th {
+    background-color: #f2f2f2;
+}
+
+/* html part (but affects everything else as well */
+article div {
+  width: 95%;
+  font-size: 17px;
+  margin: 1px;
+  padding: 0;
+  display: inline-box;
+}
+
+article p{
+  font-size: 15px;
+  font-family: "Times New Roman", Times, serif;
+  display: inline-box;
+}
+
+/*article header{
+  padding: 60px;
+  text-align: center;
+  background: #1abc9c;
+  color: white;
+  font-size: 30px;
+}*/

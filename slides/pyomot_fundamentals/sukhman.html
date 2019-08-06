@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Syntax &mdash; pyomo</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/slides.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    
+    
+    
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2019.07.09',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/common.js"></script>
+    
+    <script type="text/javascript" src="../_static/slides.js"></script>
+    <script type="text/javascript" src="../_static/sync.js"></script>
+    <script type="text/javascript" src="../_static/controller.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="pyomo" href="../index.html" />
+    <link rel="next" title="Putting it all together: Concrete Knapsack(16)" href="yifei.html" />
+    <link rel="prev" title="Welcome to Pyomo Fundamentals&#39;s documentation!" href="../index.html" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  
+<article class="slide level-1" id="syntax">
+
+<h1>Syntax</h1>
+
+<hr class="docutils" />
+<p><a class="reference internal" href="../_images/pyomo.png"><img alt="logo" src="../_images/pyomo.png" style="width: 70pt; height: 50pt;" /></a> can be used in different slides with same customization</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>Figures can have captions, images cannot
+Figure out add image in latex!</p>
+
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-9a">
+
+<h1>Populating the Model : <em>Variables</em> [9a]</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">a_variable</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="n">within</span> <span class="o">=</span> <span class="n">NonNegativeReals</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="xref py py-class docutils literal"><span class="pre">a_variable</span></code>
+|
+The name you assign the object to becomes the object's name, and must be unique in any given model</p>
+<p><code class="xref py py-class docutils literal"><span class="pre">within</span></code>
+|
+&quot;within&quot; is optional and sets the variable domain (&quot;domain&quot; is an alias for &quot;within&quot;)
+|
+Components can take a variety of keyword arguments when constructed.</p>
+<p><code class="xref py py-class docutils literal"><span class="pre">NonNegativeReals</span></code>
+|
+Several pre-defined domains, e.g., &quot;Binary&quot;</p>
+
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-9a1">
+
+<h1>Populating the Model : <em>Variables</em> [9a1]</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">a_variable</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="n">within</span> <span class="o">=</span> <span class="n">NonNegativeReals</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="figure">
+<a class="reference internal image-reference" href="../_images/redline.png"><img alt="../_images/redline.png" src="../_images/redline.png" style="width: 110px;" /></a>
+</div>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="math">
+$$\begin{array}{lll}
+\texttt{model.a\_variable = pyo.Var(within = NonNegativeReals)} &amp; &amp; \\
+\hspace{3cm} \Uparrow &amp; &amp; \\
+\mbox{The name you assign the object to } &amp; &amp; \\
+\mbox{becomes the object's name, and } &amp; &amp; \\
+\mbox{must be unique in any given model} &amp; &amp; \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-9a2">
+
+<h1>Populating the Model : <em>Variables</em> [9a2]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\texttt{model.a\_variable = pyo.Var(within = NonNegativeReals)} &amp; &amp; \\
+\hspace{8cm}\Uparrow &amp; &amp; \\
+\hspace{5cm}\mbox{&quot;within&quot; is optional and } &amp; &amp; \\
+\hspace{5cm}\mbox{sets the variable domain } &amp; &amp; \\
+\hspace{5cm}\mbox{(&quot;domain&quot; is an alias for &quot;within&quot;)} &amp; &amp; \\
+\hspace{5cm}\mbox{Components can take a variety of } &amp; &amp; \\
+\hspace{5cm}\mbox{keyword arguments when constructed.} &amp; &amp; \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-9a3">
+
+<h1>Populating the Model : <em>Variables</em> [9a3]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\texttt{model.a\_variable = pyo.Var(within = NonNegativeReals)} &amp; &amp; \\
+\hspace{11.5cm}\Uparrow &amp; &amp; \\
+\hspace{9cm}\mbox{ Several pre-defined domains, } &amp; &amp; \\
+\hspace{10.7cm}\mbox{ e.g., &quot;Binary&quot; } &amp; &amp; \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-10">
+
+<h1>Populating the Model : <em>Variables</em> [10]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{l}
+\hspace{1.6cm}\mbox{Components can take a variety of keyword arguments when constructed.} \\
+\hspace{9.5cm} \Downarrow \\
+\end{array}$$</div><div class="math">
+$$\begin{array}{l}
+\texttt{model.a\_variable = pyo.Var( within = NonNegativeReals) }
+\end{array}$$</div><div class="math">
+$$\begin{array}{lll}
+\hspace{4cm}\Uparrow                         &amp; \hspace{3.5cm}\Uparrow                        &amp; \hspace{2cm}\Uparrow \\
+\hspace{0.5cm}\mbox{The name you assign the} &amp; \hspace{0.5cm}\mbox{&quot;within&quot; is optional and} &amp; \hspace{0.5cm}\mbox{Several pre-defined domains,} \\
+\hspace{0.5cm}\mbox{object to becomes the}   &amp; \hspace{0.5cm}\mbox{sets the variable domain} &amp; \hspace{0.5cm} \mbox{e.g., &quot;Binary&quot;  }\\
+\hspace{0.5cm}\mbox{object's name, and must} &amp; \hspace{0.5cm}\mbox{(&quot;domain&quot; is an alias }   &amp;  \\
+\hspace{0.5cm}\mbox{be unique in any given}  &amp; \hspace{0.5cm}\mbox{for &quot;within&quot;)}            &amp;  \\
+\hspace{0.5cm}\mbox{ model}                  &amp;                                               &amp;  \\
+\end{array}$$</div><div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<div class="math">
+$$\begin{array}{l}
+\texttt{model.a\_variable = pyo.Var( bounds = (0, None) )} \\
+\texttt{model.a\_variable = pyo.Var( initialize = 42.0 )} \\
+\texttt{model.a\_variable = pyo.Var( initialize = 42.0 , bounds = (0, None) )} \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="list-comprehensions-14">
+
+<h1>List Comprehensions [14]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{l}
+\texttt{model.IDX = range(10) } \\
+\texttt{model.a = pyo.Var() } \\
+\texttt{model.b = pyo.Var( model.IDX )} \\
+\texttt{model.c1 = pyo. Constraint( } \\
+\texttt{ }\texttt{ }\texttt{ expr = sum(model.b[i] for i in model.IDX &lt;= model.a )} \\
+\end{array}$$</div><div class="math">
+$$\begin{array}{l}
+\hspace{4.5cm}\Uparrow \\
+\mbox{ Python list comprehensions are very common for working over} \\
+\mbox{ indexed variables and nicely parallel mathematical notation:} \sum\limits_{ i \in IDX} b_i \leq a \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-concrete-knapsack-15">
+
+<h1>Putting it all together: Concrete Knapsack [15]</h1>
+
+<hr class="docutils" />
+<div class="figure">
+<a class="reference internal image-reference" href="../_images/15.png"><img alt="../_images/15.png" src="../_images/15.png" style="width: 178pt;" /></a>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># knapsack.py</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="n">pyo</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">}</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">:</span><span class="mi">11</span><span class="p">}</span>
+<span class="n">w</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+<span class="n">W_max</span> <span class="o">=</span> <span class="mi">14</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">ConcreteModel</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span> <span class="n">A</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Objective</span><span class="p">(</span>
+   <span class="n">expr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">),</span>
+   <span class="n">sense</span> <span class="o">=</span> <span class="n">maximize</span> <span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">W_max</span> <span class="p">))</span>
+
+<span class="n">opt</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span>
+
+<span class="n">result_obj</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tee</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercise-2-40">
+
+<h1>Pyomo Fundamentals: Exercise #2 [40]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+&amp; \textbf{2.1 Knapsack problem with rules:}\mbox{ Rules are important than defining indexed }                        &amp; \\
+&amp; \hspace{1cm}\mbox{constraints, however, they can also be used for single (i.e. scalar) constraints.}               &amp; \\
+&amp; \hspace{1cm}\mbox{Starting with }\texttt{knapsack.py}\mbox{, reimplement the model using rules for the objective}  &amp; \\
+&amp; \hspace{1cm}\mbox{and the constraints. (A solution can be found in} \texttt{knapsack\_rules\_soln.py}\mbox{.)}     &amp; \\
+&amp; \textbf{2.2 Integer formulation of the knapsack problem:}\mbox{ Consider again, the knapsack}                      &amp; \\
+&amp; \hspace{1cm}\mbox{problem. Assume now that we can acquire multiple items of the same type. In this}                &amp; \\
+&amp; \hspace{1cm}\mbox{new formulation, x\_i is now an integer variable instead of a binary variable.}                  &amp; \\
+&amp; \hspace{1cm}\mbox{One way to formulate this problem is as follows:}                                                &amp; \\
+\end{array}$$
+
+$$\begin{array}{lll}
+  \max\limits_{q,x} &amp; \sum\limits_{i \in A} v_i x_i             &amp; \\
+  \mathrm{s.t.}        &amp; \sum\limits_{i \in A} w_i x_i \leq W_{max} &amp; \\
+                       &amp; x_i = \sum\limits_{j=0}^{N} j q_{i,j}          &amp; \hspace{0.5cm} \forall i \in A \\
+                       &amp; 0\leq x\leq N                                  &amp; \\
+                       &amp; q_{i,j} \in \{0,1\}                    &amp; \hspace{0.5cm} \forall i \in A, j \in \{0..N\} \\
+\end{array}$$
+
+$$\begin{array}{lll}
+&amp; \hspace{1cm}\mbox{Starting with }\texttt{knapsack_rules.py}\mbox{, implement this new formulation and solve.} &amp; \\
+&amp; \hspace{1cm}\mbox{Is the solution surprising? (A solution can be found in }\texttt{knapsack\_integer\_soln.py}\mbox{.)} &amp; \\
+&amp; \hspace{1cm}\mbox{} &amp; \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="other-modeling-components-49">
+
+<h1>Other Modeling Components [49]</h1>
+
+<hr class="docutils" />
+<ul class="simple">
+<li>Pyomo supports &quot;list&quot;-like indexed components (useful for meta-algorithms and additions of cuts)</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">Var</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">Var</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span> <span class="o">=</span> <span class="n">ConstraintList</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">30</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">15</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span> <span class="mi">10</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">25</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span>  <span class="mi">5</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">add</span><span class="p">(</span> <span class="mi">6</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">11</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span>  <span class="mi">3</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="math">
+$$\begin{array}{l}
+model.a = Var() \\
+model.b = Var() \\
+model.c = Var() \\
+model.limits = ConstraintList() \\
+\\
+model.limits.add(30*model.a + 15*model.b + 10*model.c &lt;= 100) \\
+model.limits.add(10*model.a + 25*model.b +  5*model.c &lt;= 100)  \\
+model.limits.add( 6*model.a + 11*model.b +  3*model.c &lt;= 100)   \\
+\end{array}$$
+
+$$\begin{array}{l}
+\Uparrow \\
+\mbox{&quot;add&quot; adds a single new constraint to the list.} \\
+\mbox{The constraints need not be related.} \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="expression-performance-tips-50">
+
+<h1>Expression performance tips [50]</h1>
+
+<hr class="docutils" />
+<ul class="simple">
+<li>For reasons that are beyond this tutorial, the followinf can be VERY slow in Pyomo:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">INDEX</span><span class="p">:</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">ans</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Recommended alternatives are</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">INDEX</span><span class="p">:</span>
+    <span class="n">ans</span> <span class="o">+=</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">INDEX</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Note that this is likely to change in Pyomo 5.6, where all three forms will be relatively equivalent.</li>
+<li>To report the construction of individual Pyomo components, call:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pyomo</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">report_timing</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>before building your model.</p>
+
+
+
+
+</article>
+
+</section>
+
+<section id="slide_notes">
+
+</section>
+
+  </body>
+</html>

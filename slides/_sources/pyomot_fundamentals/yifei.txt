@@ -1,0 +1,1467 @@
+Getting Started: the Model(8)
+================================
+--------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \mbox{Every Pyomo model starts with this; it tells Python to load the Pyomo} &&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\Downarrow&&\\
+   \texttt{from pyomo.environ import pyo} &&\\
+   \end{array}$$
+
+
+   $$\begin{array}{lll}
+   && \\
+   \texttt{model = pyo.ConcreteModel()} \leftarrow & \mbox{Create an instance of a Concrete}&\\
+   \Uparrow&\mbox{model}&\\
+   \mbox{Local variable to hold the model }  &\mbox{*Concrete models are immediately} &  \\
+   \mbox{we are about to construct}          &\mbox{constructed} &  \\
+   \mbox{*While not required, by convention} &\mbox{*Data must be present at the time}&  \\
+   \mbox{we use} \textbf{ ''model''}      &\mbox{components are defined}& \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Defining the Objective(11)
+===========================
+---------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \texttt{model.x = pyo.Var(initialize=-1.2, bounds=(-2, 2) )} & & \\
+   \texttt{model.y = pyo.Var(initialize= 1.0, bounds=(-2, 2) )} & & \\
+   \texttt{model.obj = Objective( } & & \\
+   \hspace{1cm}\texttt{	expr= (1-model.x)**2 + 100*(model.y-model.x**2)**2, sense= minimize)} & & \\
+   \end{array}$$
+
+   $$\begin{array}{lll}
+   \Uparrow &\hspace{1cm}\Uparrow &\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\Uparrow\\
+   \texttt{expr }\mbox{can be an expression,} & \mbox{Note that the Objective } & \mbox{If} \texttt{ sense} \mbox{ is omitted,} \\
+   \mbox{ or any function-like object } & \mbox{expression is not a} \textit{ relation-} & \mbox{ Pyomo assumes minimi-} \\
+   \mbox{that returns an expression} & \textit{al expression} & \mbox{zation} \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Defining the Problem: Constraints(12)
+=====================================
+-------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \texttt{model.a = pyo.Var()} & & \\
+   \texttt{model.b = pyo.Var()} & & \\
+   \texttt{model.c = pyo.Var()} & & \\
+   \texttt{model.c1 = pyo.Constraint(} & & \\
+   \texttt{	expr = model.b + 5 * model.c <= model.a )} & &\Longleftarrow \mbox{b + 5c} \leq \mbox{ a} \\
+   \hspace{1cm}\Uparrow &&\\
+   \texttt{expr} \mbox{ can be an expression, } && \\
+   \mbox{or any function-like object } && \\
+   \mbox{that returns an expression} && \\
+   && \\
+   \end{array}$$
+
+   $$\begin{array}{lll}
+   \texttt{model.c2 = pyo.Constraint(expr = (None, model.a + model.b, 1))}&\Leftarrow\mbox{a + b } \leq \mbox{1}&\\
+   \hspace{6cm}\Uparrow &&\\
+   \hspace{6cm}\texttt{expr }\mbox{can also be a tuple:} &&\\
+   \hspace{6cm}\mbox{* 3-tuple specifies ( LB, expr, UB )} && \\
+   \hspace{6cm}\mbox{* 2-tuple specifies an equality constraint.} && \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Higher-dimensional components(13)
+===================================
+-----------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* (Almost) All Pyomo }\textit{components }\mbox{can be }\textit{indexed} & \\
+   \texttt{ A = [1, 2, 5]} & \\
+   \texttt{ model.x = pyo.Var(A)} & \\
+   \textit{ * All } \mbox{non-keyword arguments are assumed to be } \textit{indices} & \\
+   \mbox{ * Individual indices may be multi-dimensional (e.g., a list of pairs)} & \\
+   & \\
+   \mbox{* E.g., Indexed variables} & \\
+   \texttt{ A = [1, 2, 5]} & \\
+   \texttt{ B = ['wrench', 'hammer']} & \\
+   \texttt{ model.x = pyo.Var(A)} & \\
+   \texttt{ model.y = pyo.Var(A, B) }  \Longleftarrow \mbox{The indexes are any iterable object, e.g., list or Set} & \\
+   & \\
+   \textbf{*Note : } \mbox{while indexed variables look like matrices, they are} \textbf{ not.}&\\
+   \mbox{ *In particular, we do not support matrix algebra (yet...)}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Putting it all together: Concrete Knapsack(16)
+===============================================
+-----------------------------------------------
+
+.. code-block:: python
+
+   # knapsack.py
+   from pyomo.environ import *
+   . . .
+   result_obj = opt.solve(model, tee=True)
+   model.pprint()
+
+.. code-block:: python
+
+   > python knapsack.py
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+.. code-block:: python
+
+   1 Set Declarations
+      x_index : Dim=0, Dimen=1, Size=4, Domain=None, Ordered=False, Bounds=None
+         ['hammer', 'screwdriver', 'towel', 'wrench']
+   1 Var Declarations
+      x : Size=4, Index=x_index
+         Key         : Lower : Value : Upper : Fixed : Stale : Domain
+              hammer :     0 :   1.0 :     1 : False : False : Binary
+         screwdriver :     0 :   1.0 :     1 : False : False : Binary
+               towel :     0 :   1.0 :     1 : False : False : Binary
+              wrench :     0 :   0.0 :     1 : False : False : Binary
+   1 Objective Declarations
+      value : Size=1, Index=None, Active=True
+         Key  : Active : Sense    : Expression
+         None :   True : maximize : 8*x[hammer] + 3*x[wrench] + 6*x[screwdriver] + 11*x[towel]
+   1 Constraint Declarations
+      weight : Size=1, Index=None, Active=True
+         Key  : Lower : Body                                                      : Upper : Active
+         None :  -Inf : 5*x[hammer] + 7*x[wrench] + 4*x[screwdriver] + 3*x[towel] :  14.0 :   True
+   4 Declarations: x_index x value weight
+
+
+Putting it all together: Concrete Knapsack(17)
+==============================================
+----------------------------------------------
+
+.. code-block:: python
+
+   # knapsack.py
+   from pyomo.environ import *
+   . . .
+   result_obj = opt.solve(model, tee=True)
+   model.display()
+
+.. code-block:: python
+
+   > python knapsack.py
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+.. code-block:: python
+
+   Variables:
+      x : Size=4, Index=x_index
+         Key         : Lower : Value : Upper : Fixed : Stale : Domain
+              hammer :     0 :   1.0 :     1 : False : False : Binary
+         screwdriver :     0 :   1.0 :     1 : False : False : Binary
+               towel :     0 :   1.0 :     1 : False : False : Binary
+              wrench :     0 :   0.0 :     1 : False : False : Binary
+  
+   Objectives:
+      value : Size=1, Index=None, Active=True
+         Key  : Active : Value
+         None :   True :  25.0
+
+   Constraints:
+      weight : Size=1
+         Key  : Lower : Body : Upper
+         None :  None : 12.0 :  14.0
+
+Pyomo Fundamentals: Exercises #1(18)(1)
+=======================================
+---------------------------------------
+
+
+.. math::
+   :nowrap:
+   
+   $$\begin{array}{lll}
+   & \textbf{1.1 Knapsack example: } \mbox{Solve the knapsack problem shown in the tutorial} & \\
+   & \mbox{using your IDE(e.g., Spyder) or the command line: } \texttt{> python knapsack.py.} & \\
+   & \textrm{Which items are acquired in the optional solution? What is the value of} & \\
+   & \textrm{the selected items?} & \\
+
+   & \textbf{1.2 Knapsack with improved printing: } \mbox{ The }\texttt{knapsack.py}\mbox{ example shown in the} & \\
+   & \mbox{tutorial uses }\texttt{model.pprint()} \mbox{to see the value of the solution variables.} & \\
+   & \mbox{Starting with the code in } \texttt{knapsack\_print\_incomplete.py}\mbox{, complete the missing} & \\
+   & \mbox{lines to produce formatted output. Node that the Pyomo }\texttt{value } \mbox{function should} & \\
+   & \mbox{be used to get the floating point value of Pyomo modeling components(e.g.,} & \\
+   & \texttt{print(value(model.x[i]))}. \mbox{Also print the value of the items selected (the} & \\
+   & \mbox{objective), and the total weight. (A solution can be found in }\texttt{knapsack\_print\_soln.py).} & \\
+
+   & \textbf{1.3 Changing data: } \mbox{If we were to increase the value of the wrench, at what point} & \\
+   & \mbox{would it become selected as part of the optimal solution? (A solution can be found} & \\
+   & \mbox{in }\texttt{knapsack\_wrench\_soln.py.)} & \\
+
+   & \textbf{1.4 Loading data from Excel: } \mbox{In the knapsack example shown in the tutorial slides,} & \\
+   & \mbox{the data is hardcoded at the top of the file. Instead of hardcoding the data, use } & \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Pyomo Fundamentals: Exercises #1(18)(2)
+=======================================
+---------------------------------------
+
+.. math::
+   :nowrap:
+   
+   $$\begin{array}{lll}
+   & \mbox{Python to load the data from a different source. You can start from the file} & \\
+   & \texttt{knapsack\_pandas\_excel\_incomplete.py.} \mbox{(A solution that uses pandas to load the data } & \\
+   & \mbox{from Excel is shown in }\texttt{knapsack\_pandas\_excel\_soln.py.)} & \\
+   & \textbf{1.5 NLP vs MIP: } \mbox{Solve the knapsack problem with IPOPT instead of glpk. (} & \\
+   & \mbox{Hint: switch }\texttt{glpk}\mbox{ to }\texttt{ipopt}\mbox{ in the call }\texttt{SolverFactory.} & \\
+   & \mbox{Print the solution} & \\
+   & \mbox{values for }\texttt{model.x}\mbox{. What happened? Why?} & \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+More Complex Example: Warehouse Location(19)
+=============================================
+---------------------------------------------
+
+.. figure:: /_static/map.png
+   :width: 150pt
+   :height: 100pt
+
+.. math::
+   :nowrap:
+   
+   $$\begin{array}{ll}
+   \mbox{* Determine the set of P warehouses} &\\
+   \mbox{ chosen from the set  W of candidates } &\\
+   \mbox{ to minimize the cost of serving all cus-} &\\
+   \mbox{ tomers C} &\\
+   &\\
+   \mbox{* Here } d_{w,c} \mbox{ is the cost of serving cus-} &\\
+   \mbox{ tomer c from warehouse at location w.} &\\
+   \end{array}$$
+   
+
+   $$\begin{array}{lll}
+   \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} & &\\
+   s.t. \sum\limits_{w \in W}x_{w,c} = 1 & \forall c \in C & y_w \mbox{: discrete variable (location w selected or not)}\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x_{w,c} \leq y_{w} & \forall w \in W, c \in C & x_{w,c} \mbox{: fraction of demand of customer c served by} \\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W}y_w = P & &\mbox{warehouse w} \\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }0 \leq x \leq 1 & y \in \{0,1\} ^{|W|} & \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+More Complex Example: Warehouse Location(20)
+=============================================
+---------------------------------------------
+
+.. figure:: /_static/map.png
+   :width: 150pt
+   :height: 100pt
+
+.. math::
+   :nowrap:
+   
+   $$\begin{array}{ll}
+   \mbox{* Determine the set of P warehouses} &\\
+   \mbox{ chosen from the set  W of candidates } &\\
+   \mbox{ to minimize the cost of serving all cus-} &\\
+   \mbox{ tomers C} &\\
+   &\\
+   \mbox{* Here } d_{w,c} \mbox{ is the cost of serving cus-} &\\
+   \mbox{ tomer c from warehouse at location w.} &\\
+   \end{array}$$
+   
+
+   $$\begin{array}{lll}
+   &&\\
+   \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} & & \mbox{(minimize total cost)}\\
+   s.t. \sum\limits_{w \in W}x_{w,c} = 1 & \forall c \in C & \mbox{(guarantee all customers served)}\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x_{w,c} \leq y_{w} & \forall w \in W, c \in C & \mbox{(customer c can only be served from} \\
+   & & \mbox{ warehouse w if warehouse w is selected)}\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W}y_w = P & &\mbox{(select P warehouses)} \\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }0 \leq x \leq 1 & y \in \{0,1\} ^{|W|} &\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Key difference?(21)
+===================
+-------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{llll}
+   \textbf{Knapsack} &\hspace{1cm} \textbf{Warehouse Location} &\\
+   \max\limits_{x} \sum\limits_{i \in A} v_i x_i  &\hspace{1cm} \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &\\
+   s.t. \sum\limits_{i \in A}w_i x_i \leq W_{max} &\hspace{1cm} s.t. \sum\limits_{w \in W} x_{w,c} = 1 &\forall c \in C \\
+   \hspace{2cm}x \in \{0,1\}^{|A|} & \hspace{2cm}x_{w,c} \leq y_w &\forall w \in W, c \in C \\
+   & \hspace{2cm}\sum\limits_{w \in W} y_w = P &\\
+   & \hspace{2cm}0 \leq x \leq 1 & y \in \{0,1\}^{|W|}\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Key difference: Scalar vs Indexed Constraint(22)
+=================================================
+-------------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \textbf{Knapsack} & \textbf{Warehouse Location} &\\
+   \max\limits_{x} \sum\limits_{i \in A} v_i x_i  & \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &\\
+   s.t. \underline{\sum\limits_{i \in A}w_i x_i \leq W_{max}} & s.t.\sum\limits_{w \in W} x_{w,c} = 1 &\forall c \in C\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &\forall w \in W, c \in C \\
+   & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &\\
+   \underline{w_{hammer}x_{hammer} + ... + w_{wrench}x_{wrench} \leq W_{max}}& \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 & y \in \{0,1\}^{|W|}\\
+   \\
+   \\
+   \\
+   \\
+   \end{array}$$
+  
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+
+Key difference: Scalar vs Indexed Constraint(23)
+=================================================
+-------------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \textbf{Knapsack} & \textbf{Warehouse Location} &\\
+   \max\limits_{x} \sum\limits_{i \in A} v_i x_i  & \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &\\
+   s.t. \underline{\sum\limits_{i \in A}w_i x_i \leq W_{max}} & s.t.\sum\limits_{w \in W} x_{w,c} = 1 &\forall c \in C\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &\forall w \in W, c \in C \\
+   & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &\\
+   \underline{w_{hammer}x_{hammer} + ... + w_{wrench}x_{wrench} \leq W_{max}}& \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 & y \in \{0,1\}^{|W|}\\
+   \\
+   x_{Har, NYC} + x_{Mem, NYC} + x_{Ash, NYC} = 1&&\\
+   x_{Har, LA} + x_{Mem, LA} + x_{Ash, LA} = 1&&\\
+   x_{Har, Chi} + x_{Mem, Chi} + x_{Ash, Chi} = 1&&\\
+   x_{Har, Hou} + x_{Mem, Hou} + x_{Ash, Hou} = 1&&\\
+   \\
+   \\
+   \end{array}$$
+
+.. list-table::
+   :widths: 2 1 1 1 1
+   :header-rows: 1
+
+   * - w\\c
+     - NYC
+     - LA
+     - Chicago
+     - Houston
+   * - Harlingen
+     - 1956
+     - 1606
+     - 1410
+     - 330
+   * - Memphis
+     - 1096
+     - 1792
+     - 531
+     - 567
+   * - Ashland
+     - 485
+     - 2322
+     - 324
+     - 1236
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Key difference: Scalar vs Indexed Constraint(23)
+=================================================
+-------------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \textbf{Knapsack} & \textbf{Warehouse Location} &\\
+   \max\limits_{x} \sum\limits_{i \in A} v_i x_i  & \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &\\
+   s.t.\sum\limits_{i \in A}w_i x_i \leq W_{max} & s.t.\underline{\sum\limits_{w \in W} x_{w,c} = 1} &\underline{\forall c \in C}\\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &\forall w \in W, c \in C \\
+   & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &\\
+   w_{hammer}x_{hammer} + ... + w_{wrench}x_{wrench} \leq W_{max} & \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 & y \in \{0,1\}^{|W|}\\
+   \\
+   \underline{x_{Har, NYC} + x_{Mem, NYC} + x_{Ash, NYC} = 1}&&\\
+   \underline{x_{Har, LA} + x_{Mem, LA} + x_{Ash, LA} = 1}&&\\
+   \underline{x_{Har, Chi} + x_{Mem, Chi} + x_{Ash, Chi} = 1}&&\\
+   \underline{x_{Har, Hou} + x_{Mem, Hou} + x_{Ash, Hou} = 1}&&\\
+   \\
+   \\
+   \end{array}$$
+
+.. list-table::
+   :widths: 2 1 1 1 1
+   :header-rows: 1
+
+   * - w\\c
+     - NYC
+     - LA
+     - Chicago
+     - Houston
+   * - Harlingen
+     - 1956
+     - 1606
+     - 1410
+     - 330
+   * - Memphis
+     - 1096
+     - 1792
+     - 531
+     - 567
+   * - Ashland
+     - 485
+     - 2322
+     - 324
+     - 1236
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Key difference: Scalar vs Indexed Constraint(24)
+=================================================
+-------------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \textbf{Knapsack} & \hspace{1cm}\textbf{Warehouse Location} &\\
+   \max\limits_{x} \sum\limits_{i \in A} v_i x_i  & \hspace{1cm}\min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &\\
+   s.t. \underline{\sum\limits_{i \in A}w_i x_i \leq W_{max}} & \hspace{1cm}s.t.\underline{\sum\limits_{w \in W} x_{w,c} = 1} &\underline{\forall c \in C}\\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} & \hspace{1cm}\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &\forall w \in W, c \in C \\
+   &\hspace{1cm}\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &\\
+   &\hspace{1cm}\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 & y \in \{0,1\}^{|W|}\\
+   \\
+   \end{array}$$
+
+   $$\begin{array}{llll}
+   \mbox{* Knapsack problem: All constraints are singular (i.e., scalar)} &&&\\
+   \mbox{* Warehouse location problem:} &&&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\mbox{* Multiple constraints defined over indices}&&&\\
+   \mbox{* Pyomo used the concept of construction rules to specify } &&&\\
+   \mbox{  indexed constraints} &&&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Indexed Constraints: Construction Rules(25)
+===========================================
+-------------------------------------------
+
+.. math::
+   :nowrap:
+   
+   $$\begin{array}{ll}
+   \sum\limits_{w \in W} x_{w,c} = 1 &\forall c \in C\\
+   \end{array}$$
+
+   $$\begin{array}{ll}
+   \\
+   \texttt{w = ['Harlinggen', 'Memphis', 'Ashland']}&\\
+   \texttt{C = ['NYC', 'LA', 'Chicago', 'Houston']}&\\
+   \texttt{model.x = pyo.Var(W, C, bounds=(0,1))}&\\
+   \texttt{model.y = Var(W, within=Binary)}&\\
+   \\
+   \\
+   \mbox{Particular index is passed as argument to the rule}&\\
+   \hspace{5cm}\Downarrow&\\ 
+   \texttt{def one\_per\_cust\_rule}\underline{\texttt{(m, c):}}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return sum(m.x[w,c] for w in W) == 1}&\\
+   \texttt{model.one\_per\_cust = pyo.Constraint(C, }\underline{\texttt{rule=one\_per\_cust\_rule)}}&\\
+   \hspace{8.5cm}\uparrow&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\mbox{For indexed constraints, you provide a ''rule'' (function) that}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\mbox{returns an expression (or tuple) for each index.}&\\
+   \\
+   \textbf{Rule is called once for every entry in C!}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Construction Rules: Multiple indices(26)
+===========================================
+-------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   x_{w,c} \leq y_{w} &\forall w \in W, c \in C\\
+   \end{array}$$
+
+   $$\begin{array}{ll}
+   \\
+   \texttt{w = ['Harlinggen', 'Memphis', 'Ashland']}&\\
+   \texttt{C = ['NYC', 'LA', 'Chicago', 'Houston']}&\\
+   \texttt{model.x = pyo.Var(W, C, bounds=(0,1))}&\\
+   \texttt{model.y = Var(W, within=Binary)}&\\
+   \\
+   \\
+   \mbox{Each dimension of the indices is a separate argument to the rule}&\\
+   \hspace{7cm}\Downarrow&\\
+   \texttt{def warehouse\_active\_rule(m, }\underline{\texttt{w, c):}}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return m.x[w,c] <= m.y[w]}&\\
+   \texttt{model.warehouse\_active = pyo.Constraint(W, C, rule=warehouse\_active\_rule)}&\\
+   \\
+   \textbf{Rule is called once for every entry w in W crossed with every entry c in C!}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Construction Rules: Complex logic(27)
+=====================================
+-------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   x_i = \left\{ \begin{array}{ll}
+                      cos(y_i)  & \mbox{i even} \\
+                      sin(y_i)  & \mbox{i odd}
+                      \end{array}
+         \right.     & \forall \{ i \in N : i <> 0 \}\\
+   \end{array}$$
+
+   $$\begin{array}{ll}
+   \\
+   \texttt{def complex\_rule(model, i):}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{if i == 0:}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return pyo.Constraint.Skip}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{elif i \% 2 == 0:}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return model.x[i] == cos(model.y[i])}&\\
+   \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return model.x[i] == sin(model.y[i])}&\\
+   \texttt{model.complex\_constraint = pyo.Constraint(N, M, rule=complex\_rule)}&\\
+   \\
+   \textbf{Constraint rules can contain complex logic on the indices }&\\
+   \textbf{and other parameters, but NOT on the value of model variables.}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Putting it all together: Warehouse Location(29)
+================================================
+------------------------------------------------
+
+.. figure:: /_static/map.png
+   :width: 150pt
+   :height: 100pt
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \mbox{* Determine the set of P warehouses} &min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c}&\\
+   \mbox{ chosen from the set  W of candidates } &s.t. \sum\limits_{w \in W}x_{w,c} = 1 &\forall c \in C\\
+   \mbox{ to minimize the cost of serving all cus-} &\hspace{1cm}x_{w,c} \leq y_{w}&\forall w \in W, c \in C\\
+   \mbox{ tomers C} &\hspace{1cm}\sum\limits_{w \in W}y_w = P &P = 2\\\\
+   \mbox{* Here } d_{w,c} \mbox{ is the cost of serving cus-} &\hspace{1cm}0 \leq x \leq 1&y \in \{0,1\} ^{|W|}\\
+   \mbox{ tomer c from warehouse at location w.}&\\S
+   \\
+   \\
+   \end{array}$$
+
+.. list-table::
+   :widths: 2 1 1 1 1
+   :header-rows: 1
+
+   * - w\\c
+     - NYC
+     - LA
+     - Chicago
+     - Houston
+   * - Harlingen
+     - 1956
+     - 1606
+     - 1410
+     - 330
+   * - Memphis
+     - 1096
+     - 1792
+     - 531
+     - 567
+   * - Ashland
+     - 485
+     - 2322
+     - 324
+     - 1236
+
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Putting It All Together : Warehouse Location(33)
+=================================================
+-------------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   x_{w,c} &\forall w \in W, c \in C\\
+   y_{w} &\forall w \in W\\
+   \end{array}$$
+
+.. code-block:: python
+   :emphasize-lines: 13,14
+
+   # warehouse_location.py: Warehouse location determination problem
+   from pyomo.environ import *
+
+   model = ConcreteModel(name="(WL)")
+
+   W = ['Harlingen', 'Memphis', 'Ashland']
+   C = ['NYC', 'LA', 'Chicago', 'Houston']
+   d = {('Harlingen', 'NYC'): 1956, \
+      . . .
+      ('Ashland', 'Houston'): 1236 }
+   P = 2
+
+   model.x = Var(W, C, bounds=(0,1))
+   model.y = Var(W, within=Binary)
+
+   def obj_rule(m):
+      return sum(d[w,c]*m.x[w,c] for w in W for c in C)
+   model.obj = Objective(rule=obj_rule)
+
+   def one_per_cust_rule(m, c):
+      return sum(m.x[w,c] for w in W) == 1
+   model.one_per_cust = Constraint(C, rule=one_per_cust_rule)
+
+   def warehouse_active_rule(m, w, c):
+      return m.x[w,c] <= m.y[w]
+   model.warehouse_active = Constraint(W, C, rule=warehouse_active_rule)
+
+   def num_warehouses_rule(m):
+      return sum(m.y[w] for w in W) <= P
+   model.num_warehouses = Constraint(rule=num_warehouses_rule)
+
+   SolverFactory('glpk').solve(model)
+
+   model.pprint()
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+
+Putting It All Together : Warehouse Location(34)
+=================================================
+-------------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \min\limits_{x,y}\sum\limits_{w \in W, c \in C} d_{w,c} x_{w,c}&\\
+   \end{array}$$
+
+.. code-block:: python
+   :emphasize-lines: 16,17,18
+
+   # warehouse_location.py: Warehouse location determination problem
+   from pyomo.environ import *
+
+   model = ConcreteModel(name="(WL)")
+
+   W = ['Harlingen', 'Memphis', 'Ashland']
+   C = ['NYC', 'LA', 'Chicago', 'Houston']
+   d = {('Harlingen', 'NYC'): 1956, \
+      . . .
+      ('Ashland', 'Houston'): 1236 }
+   P = 2
+
+   model.x = Var(W, C, bounds=(0,1))
+   model.y = Var(W, within=Binary)
+
+   def obj_rule(m):
+      return sum(d[w,c]*m.x[w,c] for w in W for c in C)
+   model.obj = Objective(rule=obj_rule)
+
+   def one_per_cust_rule(m, c):
+      return sum(m.x[w,c] for w in W) == 1
+   model.one_per_cust = Constraint(C, rule=one_per_cust_rule)
+
+   def warehouse_active_rule(m, w, c):
+      return m.x[w,c] <= m.y[w]
+   model.warehouse_active = Constraint(W, C, rule=warehouse_active_rule)
+
+   def num_warehouses_rule(m):
+      return sum(m.y[w] for w in W) <= P
+   model.num_warehouses = Constraint(rule=num_warehouses_rule)
+
+   SolverFactory('glpk').solve(model)
+
+   model.pprint()
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Parameters(43)
+===============
+---------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Indexed numeric values}&\\
+   \texttt{model.a\_param\_vec = Param(IDX,initialize = data, default = 0)}&\\
+   \phantom{model.a\_param\_vec = Param(IDX,initialize }\uparrow\hspace{3cm}\uparrow&\\
+   \phantom{ize = data,}\mbox{''data'' must be a dictionary(*) of index keys}\hspace{1cm}\mbox{Providing ''default'' allows}&\\
+   \phantom{ize = data,}\mbox{to values because all sets are assumed to be }\hspace{1cm}\mbox{the initialization data to only}&\\
+   \phantom{ize = data,}\mbox{unordered} \hspace{6cm}\mbox{specify the ''unusual'' values}&\\
+   \phantom{ize = data,}\mbox{(*)-actually, it must define \_\_getitem\_\_(),}&\\
+   \phantom{ize = data,}\mbox{but that only really matters to Python geeks}&\\
+   \\
+   \mbox{* Mutable Parameters} &\\
+   \texttt{model.a\_parameter = Param(initialize = 42, mutable = True)} \\
+   \hspace{10cm}\uparrow&\\
+   \hspace{7.5cm}\mbox{Indicates to Pyomo that you}&\\
+   \hspace{7.5cm}\mbox{may want to change this pa-}&\\
+   \hspace{7.5cm}\mbox{rameter later.}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Generating and Managing Indices: Sets(44)
+=========================================
+-----------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Any iterable object can be an index, e.g., lists:}&\\
+   \phantom{* A}\mbox{* IDX\_a = [1,2,5]}&\\
+   \phantom{* A}\mbox{* DATA = {1: 10, 2: 21, 5:42};}&\\
+   \phantom{* A}\mbox{* IDX\_b = DATA.keys()}&\\
+   &\\
+   \mbox{* Sets: objects for managing multidimensional indices}&\\
+   \phantom{* A}\texttt{* model.IDX = pyo.Set(initialize = [1,2,5])}&\\
+   \hspace{4.5cm}\uparrow\hspace{3.5cm}\uparrow&\\
+   \phantom{* model}\mbox{Note: capitalization matters:}\hspace{2cm}\mbox{Like indices, Sets can be}&\\
+   \phantom{* model}\mbox{Set = Pyomo class}\hspace{4cm}\mbox{initialized from any iterable}&\\
+   \phantom{* model}\mbox{Set = Native Python set}&\\
+   \phantom{* A}\texttt{* model.IDX = pyo.Set([1,2,5])}&\\
+   \hspace{4.5cm}\uparrow&\\
+   \hspace{2cm}\mbox{Note: This does not mean what you think it does.}&\\
+   \hspace{2cm}\mbox{This creates a 3-member indexed set, where each set is empty.}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Sequential Indices: RangeSet(45)
+=================================
+---------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Sets of sequential integers are common}&\\
+   \hspace{2ex}\texttt{* model.IDX = pyo.Set(initialize = range(5))}&\\
+   \hspace{8.5cm}\uparrow&\\
+   \hspace{7cm}\mbox{Note: Python range is 0-based.}&\\
+   \hspace{7cm}\mbox{This gives [0, 1, 2, 3, 4]}&\\
+   \hspace{2ex}\texttt{* model.IDX = pyo.RangeSet(5)}&\\
+   \hspace{5cm}\uparrow&\\
+   \hspace{3cm}\mbox{Note: RangeSet is 1-based.}&\\
+   \hspace{3cm}\mbox{This gives [1, 2, 3, 4, 5]}&\\
+   \\
+   \mbox{* You can provide lower and upper bounds to RangeSet}&\\
+   \hspace{2ex}\texttt{model.IDX = pyo.RangeSet(0, 4)}&\\
+   \hspace{5cm}\uparrow&\\
+   \hspace{3cm}\mbox{This gives [0, 1, 2, 3, 4]}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Manipulating Sets(46)
+======================
+----------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Creating sparse sets}&\\
+   \hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}&\\
+   \hspace{1cm}\texttt{def lower\_tri\_filter(model, i, j):}&\\
+   \hspace{3cm}\texttt{return j <= i}&\\
+   \hspace{1cm}\texttt{model.LTRI = pyo.Set(initialize = model.IDX * model.IDX,}&\\
+   \hspace{5cm}\texttt{filter = lower\_tri\_filter)}&\\
+   \hspace{5.5cm}\uparrow&\\
+   \hspace{3.5cm}\mbox{The filter should return True if the element is in the set;}&\\
+   \hspace{3.5cm}\mbox{False otherwise.}&\\
+   \\
+   \mbox{* Sets support efficient higher-dimensional indices}&\\
+   \hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}&\\
+   \hspace{1cm}\texttt{model.IDX2 = model.IDX * model.IDX}&\\
+   \hspace{3cm}\uparrow\hspace{4.5cm}\uparrow&\\
+   \hspace{1.5cm}\mbox{This creates a virtual}\hspace{1cm}\mbox{Sets also support union (\&), intersection (|),}&\\
+   \hspace{1.5cm}\mbox{2-D ''matri'' Set}\hspace{2cm}\mbox{difference(-), symmetric difference(\^ )}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Higher-Dimensional Sets and Flattening(47)
+============================================
+--------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Higher-dimensional sets contain multiple indices per element}&\\
+   \hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}&\\
+   \hspace{1cm}\texttt{model.IDX2 = model.IDX * model.IDX}&\\
+   \hspace{1cm}\texttt{tuples = list()}&\\
+   \hspace{1cm}\texttt{for i in model.IDX:}&\\
+   \hspace{3cm}\texttt{for j in model.IDX:}&\\
+   \hspace{5cm}\texttt{tuples.append((i,j))}&\\
+   \hspace{1cm}\texttt{model.IDXT = pyo.Set(initialize=tuples)}&\\
+   \mbox{* IDX2 == IDXT == [(1,1),(1,2),(1,5),(2,1),(2,2),(2,5),(5,1),(5,2),(5,5)]}&\\
+   \mbox{*Higher-dimensional sets and rules}&\\
+   \hspace{2cm}\textbf{Each dimension of each index is }&\\
+   \hspace{2cm}\textbf{a separate argument to the rule}&\\
+   \hspace{5.5cm}\downarrow &\\
+   \hspace{1cm}\texttt{def c5\_rule(model, i, j, k):}&\\
+   \hspace{3cm}\texttt{return model.a[i] + model.a[j] + model.a[k] <= 1}&\\
+   \hspace{1cm}\texttt{model.c5 = pyo.Constraint(model.IDX2, model.IDX, rule=c5\_rule)}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Set ordering(48)
+=================
+-----------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{By default, Sets are unordered (just like Python sets and dictionaries)}&\\
+   \hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}\Longleftarrow\mbox{No specific order guaranteed for}&\\
+   \hspace{2cm}\texttt{print(i)}\hspace{5.5cm}\mbox{this loop (e.g.,1,5,2...5,1,2...)}&\\
+   \\
+   \hspace{1cm}\texttt{model.x = Var(model.IDX)}&\\
+   \hspace{1cm}\texttt{for k in model.x:}\hspace{3cm}\Longleftarrow\mbox{This is also true for variables}&\\
+   \hspace{2cm}\texttt{print(value(model.x[i]))}\hspace{1.5cm}\mbox{indexed by unordered sets. }&\\
+   \\
+   \hspace{1cm}\texttt{model.IDXO = pyo.Set(initialize=[1,2,5], ordered=True)}&\\
+   \hspace{10cm}\uparrow&\\
+   \hspace{8cm}\mbox{Use the keyword argument ordered=True}&\\
+   \hspace{8cm}\mbox{to guarantee fixed order.}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Pyomo Fundamentals: Exercises #3(51)(1)
+=======================================
+---------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \textbf{3.1 Changing Parameter values: }\mbox{In the tutorial slides, we saw that a}&\\
+   \mbox{parameter could be specified to be }\texttt{mutable. }\mbox{This tells Pyomo that the}&\\
+   \mbox{value of the parameter may change in the future, and allows the user to}&\\
+   \mbox{change the parameter value and resolve the problem without the need}&\\
+   \mbox{to rebuild the entire model each time. We will use this functionality}&\\
+   \mbox{to find a better solution to an earlier exercise. Considering again the}&\\
+   \mbox{knapsack problem, we would like to find when the wrench becomes}&\\
+   \mbox{valuable enough to be a part of the optimal solution. Create a Pyomo}&\\
+   \texttt{Parameter }\mbox{for the value of the items, make it mutable, and then write}&\\
+   \mbox{a loop that prints the solution for different wrench values. Start with}&\\
+   \mbox{the file }\texttt{knapsack\_mutable\_parameter\_incomplete.py. }\mbox{(A solution for}&\\
+   \mbox{this problem can be found in knapsack\_mutable\_parameter\_incomplete.py.)}&\\
+   \\
+   \textbf{3.2 Integer cuts: }\mbox{Often, it can be important to find not only the "best"}&\\
+   \mbox{solution, but a number of solutions that are equally optimal, or close}&\\
+   \mbox{to optimal. For discrete optimization problems, this can be fine us-}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Pyomo Fundamentals: Exercises #3(51)(2)
+=======================================
+---------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{ing something know as an integer cut. Consider again the knapsack}&\\
+   \mbox{problem where the choice of which items to select is a discrete variable}&\\
+   x_i \texttt{ }\forall i \in A \mbox{. Let }x_i^* \mbox{ be a particular set of x values we want to remove}&\\
+   \mbox{from the feasible solution space. We define an integer cut using two}&\\
+   \mbox{sets. The first set }S_0 \mbox{ contain the indices for those variabels whose}&\\
+   \mbox{current solution is 0, and the second set }S_1 \mbox{ consists of indices for those}&\\
+   \mbox{variables whose current solution is 1. Given these two sets, an integer}&\\
+   \mbox{cur constraint that would prevent such a solution from appearing again}&\\
+   \mbox{is defined by, }\sum\limits_{i \in S_0}x[i] + \sum\limits_{i \in \in S_1}(1 - x[i]) \geq 1 &\\
+   \mbox{Starting with }\texttt{knapsack\_rules.py}\mbox{, write a loop that solves the problem}&\\
+   \mbox{5 times, adding an integer cut to remove the previous solution at each}&\\
+   \mbox{iteration of the loop. (A solution for this problem can be found in}&\\
+   \texttt{knapsack\_integer\_cut\_soln.py}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Pyomo Fundamentals: Exercises #3(52)(1)
+=======================================
+---------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \textbf{3.3 Putting it all together with the lot sizing example: }\mbox{We will now}&\\
+   \mbox{write a complete model from scratch using a well-known multi-period}&\\
+   \mbox{optimization problem for optimal lot-sizing adapted from Hagen el al.}&\\
+   \mbox{(2001) shown below.}&\\
+   \end{array}$$
+
+   $$\begin{array}{lll}
+   min \sum\limits_{t \in T}c_ty_t + h_t^+I_t^+ + h_t^-I_t^- &&\mbox{(1)}\\
+   \hspace{2.5cm}s.t. I_t = I_{t-1} + X_t - d_t & \forall t \in T & \mbox{(2)}\\
+   \hspace{3cm}I_t = I_t^+ - I_t^- & \forall t \in T & \mbox{(3)}\\
+   \hspace{3cm}X_t \leq P_{yt} & \forall t \in T &\mbox{(4)}\\
+   \hspace{3cm}X_t, I_t^+, I_t^- \geq 0 & \forall t \in T & \mbox{(5)} \\
+   \hspace{3cm}y_t \in {0,1} & \forall t \in T & \mbox{(6)} \\
+   \end{array}$$
+
+   $$\begin{array}{ll}
+   \mbox{Our goal is to find the optimal prpduction }X_t\mbox{ given know demands}&\\
+   d_t\mbox{, fixed cost }c_t\mbox{ associated with active production in a particular time}&\\
+   \mbox{period, an inventory holding cost }h_t^+ \mbox{ and a shortage cost } h_t^- \mbox{ (cost of}&\\
+   \mbox{keeping a backlog) of orders. The variable y\_t (binary) determines if we}&\\
+   \mbox{produce in time t or not, and } I_t^+ \mbox{ represents inventory that we are storing}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Pyomo Fundamentals: Exercises #3(52)(2)
+=======================================
+---------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{across time period t, while } I_t^- \mbox{ represents the magnitude of the backlog.}&\\
+   \mbox{Note that equation (4) is a constraint that only allows production in}&\\
+   \mbox{time period t if the indicator variable } y_t = 1.&\\
+   \mbox{Write a Pyomo model for this problem and solve it using }\texttt{glpk}\mbox{ using the}&\\
+   \mbox{data provided below. You can start with the file }\texttt{lot\_sizing\_incomplete.py.}&\\
+   \mbox{(A solution is provided in }\texttt{lot\_sizing\_soln.py.)} &\\
+   \end{array}$$
+
+   $$\begin{array}{lll}
+   \textbf{Parameter}&\textbf{Description}&\textbf{Value}\\
+   c &\mbox{fixed cost of production} &4.6\\
+   I_0^+ &\mbox{initial value of positive inventory} &5.0 \\
+   I_0^- &\mbox{initial value of backlogged orders} &0.0 \\
+   h^+ &\mbox{cost(per unit) of holding inventory} &0.7 \\
+   h^- &\mbox{shortage cost (per unit)} &1.2 \\
+   P &\mbox{maximum production amount (big-M) value} &5 \\
+   d &\mbox{demand} &[5,7,6.2,3.1,1.7]\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Other Topics(53)
+================
+----------------
+
+Solving models: the pyomo command(54)
+=====================================
+-------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* pyomo(pyomo.exe on Windows):}&\\
+   \hspace{1cm}\mbox{* Constructs model and passes it to an (external) solver}&\\
+   \hspace{2cm}\texttt{pyomo solve <model\_file> [<data\_file> ] [options]}&\\
+   \hspace{1cm}\mbox{* Installed to:}&\\
+   \end{array}$$
+
+.. code-block:: python
+
+   [PYTHONHOME]\Scripts 	[Windows; C:\Python27\Scripts]
+   [PYTHONHOME]/bin 	[Linux; /usr/bin]
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Key options (many others; see --help)}&\\
+   \end{array}$$
+
+   $$\begin{array}{ll}
+   \mbox{--help}&\mbox{Get list of all options}\\
+   \mbox{--help-solvers}&\mbox{Get the list of all recognized solvers}\\
+   \mbox{--solver=<solver\_name>}&\mbox{Set the solver that Pyomo will invoke}\\
+   \mbox{--solver-options="key=value[...]"}&\mbox{Specify options to pass to the solver as a space-}\\
+   &\mbox{separated list of keyword-value pairs}\\
+   \mbox{--stream-solver}&\mbox{Display the solver output during the solve}\\
+   \mbox{--summary}&\mbox{Display a summary of the optimization result}\\
+   \mbox{--report-timing}&\mbox{Report additional timing information, including}\\
+   &\mbox{construction time for each model component}\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Abstract Modeling(55)
+======================
+----------------------
+
+Concrete vs. Abstract Models(56)
+================================
+--------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Concrete Models: data first, then model}&\\
+   \hspace{1cm}\mbox{* 1-pass construction}&\\
+   \hspace{1cm}\mbox{* All data must be present before Python starts processing the model}&\\
+   \hspace{1cm}\mbox{Pyomo will construct each component in order at the time it is declared}&\\
+   \hspace{1cm}\mbox{Straightforward logical process; easy to script.}&\\
+   \hspace{1cm}\mbox{Familiar to modelers with experience with GAMS}&\\
+   \mbox{* Abstract Models: model first, then data}&\\
+   \hspace{1cm}\mbox{* 2-pass construction}&\\
+   \hspace{1cm}\mbox{* Pyomo stores the basic model declarations, but does not construct the actual objects}&\\
+   \hspace{2cm}\mbox{* Details on how to construct the component hidden in functions, or rules}&\\
+   \hspace{2cm}\mbox{* e.g., it will declare an indexed variable "x", but will not expand the indices or}&\\
+   \hspace{2.5cm}\mbox{populate any of the individual variable values.}&\\
+   \mbox{* At "creation time", data is applied to the abstract declaration to create a concrete}&\\
+   \hspace{1cm}\mbox{instance (components are still constructed in declaration order)}&\\
+   \mbox{* Encourages generic modeling and model reuse}&\\
+   \hspace{1cm}\mbox{* e.g., model can be used for arbitrary-sized inputs}&\\
+   \mbox{* Familiar to modelers with experience with AMPL}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 175px
+   :height: 80px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Data Sources(57)
+=================
+-----------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \mbox{* Data can be imported from ".dat" file}&\\
+   \hspace{1cm}\mbox{* Format similar to AMPL style}&\\
+   \hspace{1cm}\mbox{* Explicit data from "param" declarations}&\\
+   \hspace{1cm}\mbox{* External data through "load" declarations:}&\\
+   \hspace{2cm}\mbox{* Excel}&\\
+   \hspace{2cm}\texttt{load ABCD.xls range=ABCD : Z=[A, B, C] Y=D ;}&\\
+   \hspace{2cm}\mbox{* Databases}&\\
+   \hspace{2cm}\texttt{load "DBQ=diet.mdb" using=pyodbc query="SELECT FOOD,}&\\
+   \hspace{2cm}\texttt{cost, f\_min, f\_max from Food" : [FOOD] cost f\_min f\_max ;}&\\
+   \\
+   \mbox{* External data overrides "initialize=" declarations}&\\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Abstract p-Median (pmedian.py, 1)(58)
+=====================================
+-------------------------------------
+
+.. code-block:: python
+
+   from pyomo.environ import pyo
+
+   model = pyo.AbstractModel()
+
+   model.N = pyo.Param( within=PositiveIntegers )
+   model.P = pyo.Param( within=RangeSet( model.N ) )
+   model.M = pyo.Param( within=PositiveIntegers )
+
+   model.Locations = pyo.RangeSet( model.N )
+   model.Customers = pyo.RangeSet( model.M )
+
+   model.d = pyo.Param( model.Locations, model.Customers )
+
+   model.x = pyo.Var( model.Locations, model.Customers, bounds=(0.0, 1.0) )
+   model.y = pyo.Var( model.Locations, within=Binary )
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+Abstract p-Median (pmedian.py, 2)(59)
+=====================================
+-------------------------------------
+
+.. code-block:: python
+
+   def obj_rule(model):
+       return sum( model.d[n,m]*model.x[n,m]
+         for n in model.Locations for m in model.Customers )
+   model.obj = pyo.Objective( rule=obj_rule )
+
+   def single_x_rule(model, m):
+       return sum( model.x[n,m] for n in model.Locations ) == 1.0
+   model.single_x = pyo.Constraint( model.Customers, rule=single_x_rule )
+
+   def bound_y_rule(model, n,m):
+       return model.x[n,m] - model.y[n] <= 0.0
+   model.bound_y = pyo.Constraint( model.Locations, model.Customers,
+                               rule=bound_y_rule )
+
+   def num_facilities_rule(model):
+       return sum( model.y[n] for n in model.Locations ) == model.P
+   model.num_facilities = pyo.Constraint( rule=num_facilities_rule )
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Abstract p-Median (pmedian.dat)(60)
+====================================
+------------------------------------
+
+.. code-block:: python
+
+   param N := 3;
+
+   param M := 4;
+
+   param P := 2;
+
+   param d:  1     2     3     4 :=
+        1   1.7   7.2   9.0   8.3
+        2   2.9   6.3   9.8   0.7
+        3   4.5   4.8   4.2   9.3 ;
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+
+In Class Exercise: Abstract Knapsack(61)
+=========================================
+-----------------------------------------
+
+.. list-table::
+   :widths: 1 1 1
+   :header-rows: 1
+
+   * - Item
+     - Weight
+     - Value
+   * - hammer
+     - 5
+     - 8
+   * - wrench
+     - 7
+     - 3
+   * - screwdriver
+     - 4
+     - 6
+   * - towel
+     - 3
+     - 11
+   * - Max weight:
+     - 14
+     -
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{ll}
+   \max \sum\limits_{i = 1}^N v_ix_i & \\
+   \mbox{s.t.} \sum\limits_{i = 1}^{N} w_i x_i \leq W_{max} &\\
+   \hspace{1cm}x_i \in \{0,1\} &\\
+   \end{array}$$
+
+   $$\begin{array}{l}
+   \mbox{Syntax reminders:} \\
+   \texttt{AbstractModel()} \\
+   \texttt{Set( [index, ...], [initialize=list/function] )} & \\
+   \texttt{Param( [index, ...], [within=domain], [initialize=dict/function] )} & \\
+   \texttt{Var( [index, ...], [within=domain], [bounds=(lower,upper)] )} & \\
+   \texttt{Constraint( [index, ...], [expr=expression|rule=function] )} & \\
+   \texttt{Objective( sense={maximize|minimize},} & \\
+   \hspace{3cm}\texttt{expr=expression|rule=function )} & \\
+   \end{array}$$
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Abstract Knapsack:  Solution(62)
+================================
+--------------------------------
+
+.. code-block:: python
+
+   from pyomo.environ import pyo
+
+   model       = pyo.AbstractModel()
+   model.ITEMS = pyo.Set()
+   model.v     = pyo.Param( model.ITEMS, within=PositiveReals )
+   model.w     = pyo.Param( model.ITEMS, within=PositiveReals )
+   model.W_max = pyo.Param( within=PositiveReals )
+   model.x     = pyo.Var( model.ITEMS, within=Binary )
+
+   def value_rule(model):
+       return sum( model.v[i]*model.x[i] for i in model.ITEMS )
+   model.value = pyo.Objective( rule=value_rule, sense=maximize )
+
+   def weight_rule(model):
+       return sum( model.w[i]*model.x[i] for i in model.ITEMS ) \
+           <= model.W_max
+   model.weight = pyo.Constraint( rule=weight_rule )
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
+
+Abstract Knapsack:  Solution Data(63)
+=====================================
+-------------------------------------
+
+.. code-block:: python
+
+   set ITEMS := hammer wrench screwdriver towel ;
+
+   param:  v w :=
+       hammer        8 5
+       wrench        3 7
+       screwdriver   6 4
+       towel        11 3;
+
+   param W_max := 14;
+
+
+.. image:: /_static/pyomo.png
+   :width: 200px
+   :height: 100px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right

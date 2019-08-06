@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Learning Objectives [2] &mdash; pyomo</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/slides.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    
+    
+    
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2019.07.09',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../_static/common.js"></script>
+    
+    <script type="text/javascript" src="../_static/slides.js"></script>
+    <script type="text/javascript" src="../_static/sync.js"></script>
+    <script type="text/javascript" src="../_static/controller.js"></script>
+    <script type="text/javascript" src="../_static/init.js"></script>
+    
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="pyomo" href="../index.html" />
+    <link rel="prev" title="Welcome to Pyomo Fundamentals&#39;s documentation!" href="../index.html" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  
+<article class="slide level-1" id="learning-objectives-2">
+
+<h1>Learning Objectives [2]</h1>
+
+<hr class="docutils" />
+<ul class="build simple">
+<li>Goals, benefits, drawbacks of Pyomo</li>
+<li>Basic understanding of Python</li>
+<li><dl class="first docutils">
+<dt>Create and solve optimization problems within Pyomo</dt>
+<dd><ul class="first last">
+<li>Vars, Constraints, Objectives</li>
+<li>Sets, Parameters</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Basic scripting, workflow, and programming capabilities</dt>
+<dd><ul class="first last">
+<li>Changing data, multiple solutions, importing data, plotting, reporting</li>
+<li>Pieces to build your own workflows</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+
+
+
+
+</article>
+<article class="slide level-1" id="simple-modeling-example-classic-knapsack-problem-3">
+
+<h1>Simple Modeling Example: Classic Knapsack Problem [3]</h1>
+
+<hr class="docutils" />
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="43%" />
+<col width="29%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item (A)</th>
+<th class="head">Weight (w)</th>
+<th class="head">Value (b)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>hammer</td>
+<td>5</td>
+<td>8</td>
+</tr>
+<tr class="row-odd"><td>wrench</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>screwdriver</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>towel</td>
+<td>3</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+ $$\begin{array}{ll}
+  \max          &amp;\sum\limits_{i \in A} b_i x_i\\
+  \mathrm{s.t.} &amp; \sum\limits_{i \in A} w_i x_i \leq W_{max}\\
+                &amp; x_i \in \{0,1\}, \forall i \in A\\
+  \end{array}$$</div><div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Symbol</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A</td>
+<td>set of items available for purchase</td>
+</tr>
+<tr class="row-odd"><td>b_i</td>
+<td>benefit associated with each item</td>
+</tr>
+<tr class="row-even"><td>w_i</td>
+<td>weight associated with each item</td>
+</tr>
+<tr class="row-odd"><td>W_max</td>
+<td>max weight that can be carried</td>
+</tr>
+<tr class="row-even"><td>x_i</td>
+<td>variable to indicate carrying item i</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>Given a set of items A, with weight and value (benefit)</li>
+<li><dl class="first docutils">
+<dt>Goal: select a subset of these items</dt>
+<dd><ul class="first last">
+<li>Maximize the benefit</li>
+<li>Under weight limit</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+
+
+
+
+</article>
+<article class="slide level-1" id="simple-modeling-example-classic-knapsack-problem-4-5">
+
+<h1>Simple Modeling Example: Classic Knapsack Problem [4,5]</h1>
+
+<hr class="docutils" />
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="43%" />
+<col width="29%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item (A)</th>
+<th class="head">Weight (w)</th>
+<th class="head">Value (b)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>hammer</td>
+<td>5</td>
+<td>8</td>
+</tr>
+<tr class="row-odd"><td>wrench</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>screwdriver</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>towel</td>
+<td>3</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+ $$\begin{array}{ll}
+  \max          &amp;\sum\limits_{i \in A} b_i x_i\\
+  \mathrm{s.t.} &amp; \sum\limits_{i \in A} w_i x_i \leq W_{max}\\
+                &amp; x_i \in \{0,1\}, \forall i \in A\\
+  \end{array}$$</div><div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Symbol</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>A</td>
+<td>set of items available for purchase</td>
+</tr>
+<tr class="row-odd"><td>b_i</td>
+<td>benefit associated with each item</td>
+</tr>
+<tr class="row-even"><td>w_i</td>
+<td>weight associated with each item</td>
+</tr>
+<tr class="row-odd"><td>W_max</td>
+<td>max weight that can be carried</td>
+</tr>
+<tr class="row-even"><td>x_i</td>
+<td>variable to indicate carrying item i</td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li>Variables</li>
+<li>Objectives</li>
+<li>Constraints</li>
+<li>Sets</li>
+<li>Parameters</li>
+</ul>
+
+
+
+
+</article>
+<article class="slide level-1" id="anatomy-of-a-concrete-pyomo-model-6">
+
+<h1>Anatomy of a Concrete Pyomo Model [6]</h1>
+
+<hr class="docutils" />
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="42%" />
+<col width="29%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item (A)</th>
+<th class="head">Weight (w)</th>
+<th class="head">Value (b)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>hammer</td>
+<td>5</td>
+<td>8</td>
+</tr>
+<tr class="row-odd"><td>wrench</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>screwdriver</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>towel</td>
+<td>3</td>
+<td>11</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+ $$\begin{array}{ll}
+  \max          &amp;\sum\limits_{i \in A} b_i x_i\\
+  \mathrm{s.t.} &amp; \sum\limits_{i \in A} w_i x_i \leq W_{max}\\
+                &amp; x_i \in \{0,1\}, \forall i \in A\\
+  \end{array}$$</div><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<div class="figure">
+<a class="reference internal image-reference" href="../_images/6.png"><img alt="../_images/6.png" src="../_images/6.png" style="width: 165px;" /></a>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="n">pyo</span>
+<span class="n">A</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">}</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">:</span><span class="mi">11</span><span class="p">}</span>
+<span class="n">w</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+<span class="n">W_max</span> <span class="o">=</span> <span class="mi">14</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">ConcreteModel</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span> <span class="n">A</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Objective</span><span class="p">(</span>
+   <span class="n">expr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">),</span>
+   <span class="n">sense</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">maximize</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">W_max</span> <span class="p">))</span>
+
+<span class="n">opt</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span>
+<span class="n">result_obj</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tee</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-imports-and-namespaces-7">
+
+<h1>Pyomo Imports and namespaces [7]</h1>
+
+<hr class="docutils" />
+<ul class="simple">
+<li>Pyomo objects exist within the pyomo.environ namespace:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pyomo.environ</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyomo</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">ConcreteModel</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>To save typing, we will import the core Pyomo classes into the main namespace as pyo:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="n">pyo</span>
+<span class="n">model</span>  <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">ConcreteModel</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="getting-started-the-model-8">
+
+<h1>Getting Started: the Model(8)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{l}
+\texttt{from pyomo.environ import pyo}\hspace{0.6cm}\Leftarrow\hspace{0.1cm}\mbox{Every Pyomo model starts with this;}\\
+                                       \hspace{10cm} \mbox{it tells Python to load the} \\
+                                       \hspace{10cm} \mbox{Pyomo Modeling Environment}  \\
+\texttt{model = pyo.ConcreteModel()}\hspace{1.3cm}\Leftarrow\hspace{0.2cm}\mbox{Create an instance of a Concrete model} \\
+\hspace{0.5cm} \Uparrow \hspace{8.5cm} \mbox{* Concrete models are immediately constructed}  \\
+\mbox{Local variable to hold the model }\hspace{2.5cm}\mbox{* Data must be present at the time}  \\
+\mbox{we are about to construct}        \hspace{4.5cm} \mbox{components are defined}   \\
+\mbox{*While not required, by convention} \\
+\mbox{we use} \textbf{ ''model''}         \\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-9">
+
+<h1>Populating the Model : <em>Variables</em> [9]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{l}
+\texttt{model.a_variable = pyo.Var( within = NonNegativeReals) }
+\end{array}$$</div><div class="math">
+$$\begin{array}{lll}
+\hspace{4cm}\Uparrow                         &amp; \hspace{3.5cm}\Uparrow                        &amp; \hspace{2cm}\Uparrow \\
+\hspace{0.5cm}\mbox{The name you assign the} &amp; \hspace{0.5cm}\mbox{&quot;within&quot; is optional and} &amp; \hspace{0.3cm}\mbox{Several pre-defined domains,} \\
+\hspace{0.5cm}\mbox{object to becomes the}   &amp; \hspace{0.5cm}\mbox{sets the variable domain} &amp; \hspace{0.3cm} \mbox{e.g., &quot;Binary&quot;  }\\
+\hspace{0.5cm}\mbox{object's name, and must} &amp; \hspace{0.5cm}\mbox{(&quot;domain&quot; is an alias }   &amp;  \\
+\hspace{0.5cm}\mbox{be unique in any given}  &amp; \hspace{0.5cm}\mbox{for &quot;within&quot;)}            &amp;  \\
+\hspace{0.5cm}\mbox{ model}                  &amp;                                               &amp;  \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="populating-the-model-variables-10">
+
+<h1>Populating the Model : <em>Variables</em> [10]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{l}
+\hspace{1.6cm}\mbox{Components can take a variety of keyword arguments when constructed.} \\
+\hspace{9.5cm} \Downarrow \\
+\end{array}$$</div><div class="math">
+$$\begin{array}{l}
+\texttt{model.a_variable = pyo.Var( within = NonNegativeReals) }
+\end{array}$$</div><div class="math">
+$$\begin{array}{lll}
+\hspace{4cm}\Uparrow                         &amp; \hspace{3.5cm}\Uparrow                        &amp; \hspace{2cm}\Uparrow \\
+\hspace{0.5cm}\mbox{The name you assign the} &amp; \hspace{0.5cm}\mbox{&quot;within&quot; is optional and} &amp; \hspace{0.5cm}\mbox{Several pre-defined domains,} \\
+\hspace{0.5cm}\mbox{object to becomes the}   &amp; \hspace{0.5cm}\mbox{sets the variable domain} &amp; \hspace{0.5cm} \mbox{e.g., &quot;Binary&quot;  }\\
+\hspace{0.5cm}\mbox{object's name, and must} &amp; \hspace{0.5cm}\mbox{(&quot;domain&quot; is an alias }   &amp;  \\
+\hspace{0.5cm}\mbox{be unique in any given}  &amp; \hspace{0.5cm}\mbox{for &quot;within&quot;)}            &amp;  \\
+\hspace{0.5cm}\mbox{ model}                  &amp;                                               &amp;  \\
+\end{array}$$</div><div class="line-block">
+<div class="line"><br /></div>
+<div class="line"><br /></div>
+</div>
+<div class="math">
+$$\begin{array}{l}
+\texttt{model.a_variable = pyo.Var( bounds = (0, None) )} \\
+\texttt{model.a_variable = pyo.Var( initialize = 42.0 )} \\
+\texttt{model.a_variable = pyo.Var( initialize = 42.0 , bounds = (0, None) )} \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="defining-the-objective-11">
+
+<h1>Defining the Objective(11)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\texttt{model.x = pyo.Var(initialize=-1.2, bounds=(-2, 2) )} &amp; &amp; \\
+\texttt{model.y = pyo.Var(initialize= 1.0, bounds=(-2, 2) )} &amp; &amp; \\
+\texttt{model.obj = Objective( } &amp; &amp; \\
+\hspace{1cm}\texttt{ expr= (1-model.x)**2 + 100*(model.y-model.x**2)**2, sense= minimize)} &amp; &amp; \\
+\end{array}$$
+
+$$\begin{array}{lll}
+\hspace{1.4cm}\Uparrow &amp;\hspace{1cm}\Uparrow &amp;\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\Uparrow\\
+\texttt{expr }\mbox{can be an expression,} &amp; \mbox{Note that the Objective } &amp; \mbox{If} \texttt{ sense} \mbox{ is omitted,} \\
+\mbox{ or any function-like object } &amp; \mbox{expression is not a} \textit{ relation-} &amp; \mbox{ Pyomo assumes minimization} \\
+\mbox{that returns an expression} &amp; \textit{al expression} &amp;  \\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="defining-the-problem-constraints-12">
+
+<h1>Defining the Problem: Constraints(12)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\texttt{model.a = pyo.Var()} &amp; &amp; \\
+\texttt{model.b = pyo.Var()} &amp; &amp; \\
+\texttt{model.c = pyo.Var()} &amp; &amp; \\
+\texttt{model.c1 = pyo.Constraint(} &amp; &amp; \\
+\texttt{     expr = model.b + 5 * model.c &lt;= model.a )} &amp; &amp;\Longleftarrow \mbox{b + 5c} \leq \mbox{ a} \\
+\hspace{1cm}\Uparrow &amp;&amp;\\
+\texttt{expr} \mbox{ can be an expression, } &amp;&amp; \\
+\mbox{or any function-like object } &amp;&amp; \\
+\mbox{that returns an expression} &amp;&amp; \\
+&amp;&amp; \\
+\end{array}$$
+
+$$\begin{array}{ll}
+\texttt{model.c2 = pyo.Constraint(expr = (None, model.a + model.b, 1))}\hspace{0.5cm}\Longleftarrow\mbox{a + b } \leq \mbox{1}&amp;\\
+\hspace{6cm}\Uparrow &amp;\\
+\hspace{6cm}\texttt{expr }\mbox{can also be a tuple:} &amp;\\
+\hspace{6cm}\mbox{* 3-tuple specifies ( LB, expr, UB )} &amp; \\
+\hspace{6cm}\mbox{* 2-tuple specifies an equality constraint.} &amp; \\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="higher-dimensional-components-13">
+
+<h1>Higher-dimensional components(13)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* (Almost) All Pyomo }\textit{components }\mbox{can be }\textit{indexed} &amp; \\
+\texttt{ A = [1, 2, 5]} &amp; \\
+\texttt{ model.x = pyo.Var(A)} &amp; \\
+\textit{ * All } \mbox{non-keyword arguments are assumed to be } \textit{indices} &amp; \\
+\mbox{ * Individual indices may be multi-dimensional (e.g., a list of pairs)} &amp; \\
+&amp; \\
+\mbox{* E.g., Indexed variables} &amp; \\
+\texttt{ A = [1, 2, 5]} &amp; \\
+\texttt{ B = ['wrench', 'hammer']} &amp; \\
+\texttt{ model.x = pyo.Var(A)} &amp; \\
+\texttt{ model.y = pyo.Var(A, B) }  \Longleftarrow \mbox{The indexes are any iterable object, e.g., list or Set} &amp; \\
+&amp; \\
+\textbf{*Note : } \mbox{while indexed variables look like matrices, they are} \textbf{ not.}&amp;\\
+\mbox{ *In particular, we do not support matrix algebra (yet...)}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="list-comprehensions-14">
+
+<h1>List Comprehensions [14]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{l}
+\texttt{model.IDX = range(10) } \\
+\texttt{model.a = pyo.Var() } \\
+\texttt{model.b = pyo.Var( model.IDX )} \\
+\texttt{model.c1 = pyo. Constraint( } \\
+\texttt{ }\texttt{ }\texttt{ expr = sum(model.b[i] for i in model.IDX &lt;= model.a )} \\
+\end{array}$$</div><div class="math">
+$$\begin{array}{l}
+\hspace{4.5cm}\Uparrow \\
+\mbox{ Python list comprehensions are very common for working over} \\
+\mbox{ indexed variables and nicely parallel mathematical notation:} \sum\limits_{ i \in IDX} b_i \leq a \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-concrete-knapsack-15">
+
+<h1>Putting it all together: Concrete Knapsack [15]</h1>
+
+<hr class="docutils" />
+<div class="figure">
+<a class="reference internal image-reference" href="../_images/15.png"><img alt="../_images/15.png" src="../_images/15.png" style="width: 240px;" /></a>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># knapsack.py</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="n">pyo</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">}</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">:</span><span class="mi">11</span><span class="p">}</span>
+<span class="n">w</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hammer&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">}</span>
+<span class="n">W_max</span> <span class="o">=</span> <span class="mi">14</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">ConcreteModel</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span> <span class="n">A</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Objective</span><span class="p">(</span>
+   <span class="n">expr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">),</span>
+   <span class="n">sense</span> <span class="o">=</span> <span class="n">maximize</span> <span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">A</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">W_max</span> <span class="p">))</span>
+
+<span class="n">opt</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span>
+
+<span class="n">result_obj</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">opt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tee</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-concrete-knapsack-16">
+
+<h1>Putting it all together: Concrete Knapsack(16)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># knapsack.py</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="n">result_obj</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tee</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">knapsack</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="mi">1</span> <span class="n">Set</span> <span class="n">Declarations</span>
+   <span class="n">x_index</span> <span class="p">:</span> <span class="n">Dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Dimen</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">Domain</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">Ordered</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">Bounds</span><span class="o">=</span><span class="bp">None</span>
+      <span class="p">[</span><span class="s1">&#39;hammer&#39;</span><span class="p">,</span> <span class="s1">&#39;screwdriver&#39;</span><span class="p">,</span> <span class="s1">&#39;towel&#39;</span><span class="p">,</span> <span class="s1">&#39;wrench&#39;</span><span class="p">]</span>
+<span class="mi">1</span> <span class="n">Var</span> <span class="n">Declarations</span>
+   <span class="n">x</span> <span class="p">:</span> <span class="n">Size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="n">x_index</span>
+      <span class="n">Key</span>         <span class="p">:</span> <span class="n">Lower</span> <span class="p">:</span> <span class="n">Value</span> <span class="p">:</span> <span class="n">Upper</span> <span class="p">:</span> <span class="n">Fixed</span> <span class="p">:</span> <span class="n">Stale</span> <span class="p">:</span> <span class="n">Domain</span>
+           <span class="n">hammer</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">1.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+      <span class="n">screwdriver</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">1.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+            <span class="n">towel</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">1.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+           <span class="n">wrench</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">0.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+<span class="mi">1</span> <span class="n">Objective</span> <span class="n">Declarations</span>
+   <span class="n">value</span> <span class="p">:</span> <span class="n">Size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">Active</span><span class="o">=</span><span class="bp">True</span>
+      <span class="n">Key</span>  <span class="p">:</span> <span class="n">Active</span> <span class="p">:</span> <span class="n">Sense</span>    <span class="p">:</span> <span class="n">Expression</span>
+      <span class="bp">None</span> <span class="p">:</span>   <span class="bp">True</span> <span class="p">:</span> <span class="n">maximize</span> <span class="p">:</span> <span class="mi">8</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">hammer</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">wrench</span><span class="p">]</span> <span class="o">+</span> <span class="mi">6</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">screwdriver</span><span class="p">]</span> <span class="o">+</span> <span class="mi">11</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">towel</span><span class="p">]</span>
+<span class="mi">1</span> <span class="n">Constraint</span> <span class="n">Declarations</span>
+   <span class="n">weight</span> <span class="p">:</span> <span class="n">Size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">Active</span><span class="o">=</span><span class="bp">True</span>
+      <span class="n">Key</span>  <span class="p">:</span> <span class="n">Lower</span> <span class="p">:</span> <span class="n">Body</span>                                                      <span class="p">:</span> <span class="n">Upper</span> <span class="p">:</span> <span class="n">Active</span>
+      <span class="bp">None</span> <span class="p">:</span>  <span class="o">-</span><span class="n">Inf</span> <span class="p">:</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">hammer</span><span class="p">]</span> <span class="o">+</span> <span class="mi">7</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">wrench</span><span class="p">]</span> <span class="o">+</span> <span class="mi">4</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">screwdriver</span><span class="p">]</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">towel</span><span class="p">]</span> <span class="p">:</span>  <span class="mf">14.0</span> <span class="p">:</span>   <span class="bp">True</span>
+<span class="mi">4</span> <span class="n">Declarations</span><span class="p">:</span> <span class="n">x_index</span> <span class="n">x</span> <span class="n">value</span> <span class="n">weight</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-concrete-knapsack-17">
+
+<h1>Putting it all together: Concrete Knapsack(17)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># knapsack.py</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+<span class="n">result_obj</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">tee</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">knapsack</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Variables</span><span class="p">:</span>
+   <span class="n">x</span> <span class="p">:</span> <span class="n">Size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="n">x_index</span>
+      <span class="n">Key</span>         <span class="p">:</span> <span class="n">Lower</span> <span class="p">:</span> <span class="n">Value</span> <span class="p">:</span> <span class="n">Upper</span> <span class="p">:</span> <span class="n">Fixed</span> <span class="p">:</span> <span class="n">Stale</span> <span class="p">:</span> <span class="n">Domain</span>
+           <span class="n">hammer</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">1.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+      <span class="n">screwdriver</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">1.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+            <span class="n">towel</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">1.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+           <span class="n">wrench</span> <span class="p">:</span>     <span class="mi">0</span> <span class="p">:</span>   <span class="mf">0.0</span> <span class="p">:</span>     <span class="mi">1</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="bp">False</span> <span class="p">:</span> <span class="n">Binary</span>
+
+<span class="n">Objectives</span><span class="p">:</span>
+   <span class="n">value</span> <span class="p">:</span> <span class="n">Size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">Active</span><span class="o">=</span><span class="bp">True</span>
+      <span class="n">Key</span>  <span class="p">:</span> <span class="n">Active</span> <span class="p">:</span> <span class="n">Value</span>
+      <span class="bp">None</span> <span class="p">:</span>   <span class="bp">True</span> <span class="p">:</span>  <span class="mf">25.0</span>
+
+<span class="n">Constraints</span><span class="p">:</span>
+   <span class="n">weight</span> <span class="p">:</span> <span class="n">Size</span><span class="o">=</span><span class="mi">1</span>
+      <span class="n">Key</span>  <span class="p">:</span> <span class="n">Lower</span> <span class="p">:</span> <span class="n">Body</span> <span class="p">:</span> <span class="n">Upper</span>
+      <span class="bp">None</span> <span class="p">:</span>  <span class="bp">None</span> <span class="p">:</span> <span class="mf">12.0</span> <span class="p">:</span>  <span class="mf">14.0</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercises-1-18-1">
+
+<h1>Pyomo Fundamentals: Exercises #1(18)(1)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+&amp; \textbf{1.1 Knapsack example: } \mbox{Solve the knapsack problem shown in the tutorial} &amp; \\
+&amp; \mbox{using your IDE (e.g., Spyder) or the command line: } \texttt{&gt; python knapsack.py.} &amp; \\
+&amp; \textrm{Which items are acquired inthe optional solution? What is the value } &amp; \\
+&amp; \mbox{of the selected items?} &amp; \\
+&amp; \textbf{1.2 Knapsack with improved printing: } \mbox{ The }\texttt{knapsack.py}\mbox{ example} &amp; \\
+&amp; \mbox{shown in the tutorial uses }\texttt{model.pprint()} \mbox{to see the value of the solution variables.} &amp; \\
+&amp; \mbox{Starting with the code in }\texttt{knapsack_print_incomplete.py}\mbox{, complete the} &amp; \\
+&amp; \mbox{missing lines to produce formatted output. Node that the Pyomo }\texttt{value } \mbox{function}&amp; \\
+&amp; \mbox{should be used to get the floating point value of Pyomomodeling components (e.g.,} &amp; \\
+&amp; \texttt{print(value(model.x[i]))} \mbox{Also print the value of the items selectedthe objective),} &amp; \\
+&amp; \mbox{and the total weight. (A solution can be found in }\texttt{knapsack_print_soln.py).} &amp; \\
+&amp; \textbf{1.3 Changing data: } \mbox{If we were to increase the value of the wrench, at what } &amp; \\
+&amp; \mbox{point would it become selected as part of the optimal solution? (A solution can be found in } &amp; \\
+&amp; \texttt{knapsack_wrench_soln.py.)} &amp; \\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercises-1-18-2">
+
+<h1>Pyomo Fundamentals: Exercises #1(18)(2)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+&amp; \textbf{1.4 Loading data from Excel: } \mbox{In the knapsack example shown in the tutorial slides,} &amp; \\
+&amp; \mbox{the data is hardcoded at the top of the file. Instead of hardcoding the data, use } &amp; \\
+&amp; \mbox{Python to load the data from a different source. You can start from the file} &amp; \\
+&amp; \texttt{knapsack\_pandas\_excel\_incomplete.py.} \mbox{(A solution that uses pandas to load the data } &amp; \\
+&amp; \mbox{from Excel is shown in }\texttt{knapsack\_pandas\_excel\_soln.py.)} &amp; \\
+&amp; \textbf{1.5 NLP vs MIP: } \mbox{Solve the knapsack problem with IPOPT instead of glpk. (} &amp; \\
+&amp; \mbox{Hint: switch }\texttt{glpk}\mbox{ to }\texttt{ipopt}\mbox{ in the call }\texttt{SolverFactory.} &amp; \\
+&amp; \mbox{Print the solution values for} \texttt{model.x}\mbox{. What happened? Why?} &amp; \\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="more-complex-example-warehouse-location-19">
+
+<h1>More Complex Example: Warehouse Location(19)</h1>
+
+<hr class="docutils" />
+<div class="figure">
+<a class="reference internal image-reference" href="../_images/map.png"><img alt="../_images/map.png" src="../_images/map.png" style="width: 170pt; height: 120pt;" /></a>
+</div>
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Determine the set of P warehouses} &amp;\\
+\mbox{ chosen from the set  W of candidates } &amp;\\
+\mbox{ to minimize the cost of serving all cus-} &amp;\\
+\mbox{ tomers C} &amp;\\
+&amp;\\
+\mbox{* Here } d_{w,c} \mbox{ is the cost of serving cus-} &amp;\\
+\mbox{ tomer c from warehouse at location w.} &amp;\\
+\end{array}$$
+
+
+$$\begin{array}{lll}
+\min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp; &amp;\\
+s.t. \sum\limits_{w \in W}x_{w,c} = 1 &amp; \forall c \in C &amp; y_w \mbox{: discrete variable (location w selected or not)}\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x_{w,c} \leq y_{w} &amp; \forall w \in W, c \in C &amp; x_{w,c} \mbox{: fraction of demand of customer c served by} \\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W}y_w = P &amp; &amp;\mbox{warehouse w} \\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }0 \leq x \leq 1 &amp; y \in \{0,1\} ^{|W|} &amp; \\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="more-complex-example-warehouse-location-20">
+
+<h1>More Complex Example: Warehouse Location(20)</h1>
+
+<hr class="docutils" />
+<div class="figure">
+<a class="reference internal image-reference" href="../_images/map.png"><img alt="../_images/map.png" src="../_images/map.png" style="width: 170pt; height: 120pt;" /></a>
+</div>
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Determine the set of P warehouses} &amp;\\
+\mbox{ chosen from the set  W of candidates } &amp;\\
+\mbox{ to minimize the cost of serving all cus-} &amp;\\
+\mbox{ tomers C} &amp;\\
+&amp;\\
+\mbox{* Here } d_{w,c} \mbox{ is the cost of serving cus-} &amp;\\
+\mbox{ tomer c from warehouse at location w.} &amp;\\
+\end{array}$$
+
+
+$$\begin{array}{lll}
+&amp;&amp;\\
+\min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp; &amp; \mbox{(minimize total cost)}\\
+s.t. \sum\limits_{w \in W}x_{w,c} = 1 &amp; \forall c \in C &amp; \mbox{(guarantee all customers served)}\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x_{w,c} \leq y_{w} &amp; \forall w \in W, c \in C &amp; \mbox{(customer c can only be served from} \\
+&amp; &amp; \mbox{ warehouse w if warehouse w is selected)}\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W}y_w = P &amp; &amp;\mbox{(select P warehouses)} \\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }0 \leq x \leq 1 &amp; y \in \{0,1\} ^{|W|} &amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="key-difference-21">
+
+<h1>Key difference?(21)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{llll}
+\textbf{Knapsack} &amp;\hspace{1cm} \textbf{Warehouse Location} &amp;\\
+\max\limits_{x} \sum\limits_{i \in A} v_i x_i  &amp;\hspace{1cm} \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp;\\
+s.t. \sum\limits_{i \in A}w_i x_i \leq W_{max} &amp;\hspace{1cm} s.t. \sum\limits_{w \in W} x_{w,c} = 1 &amp;\forall c \in C \\
+\hspace{2cm}x \in \{0,1\}^{|A|} &amp; \hspace{2cm}x_{w,c} \leq y_w &amp;\forall w \in W, c \in C \\
+&amp; \hspace{2cm}\sum\limits_{w \in W} y_w = P &amp;\\
+&amp; \hspace{2cm}0 \leq x \leq 1 &amp; y \in \{0,1\}^{|W|}\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="key-difference-scalar-vs-indexed-constraint-22">
+
+<h1>Key difference: Scalar vs Indexed Constraint(22)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\textbf{Knapsack} &amp; \textbf{Warehouse Location} &amp;\\
+\max\limits_{x} \sum\limits_{i \in A} v_i x_i  &amp; \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp;\\
+s.t. \underline{\sum\limits_{i \in A}w_i x_i \leq W_{max}} &amp; s.t.\sum\limits_{w \in W} x_{w,c} = 1 &amp;\forall c \in C\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} &amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &amp;\forall w \in W, c \in C \\
+&amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &amp;\\
+\underline{w_{hammer}x_{hammer} + ... + w_{wrench}x_{wrench} \leq W_{max}}&amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 &amp; y \in \{0,1\}^{|W|}\\
+\\
+\\
+\\
+\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="key-difference-scalar-vs-indexed-constraint-23">
+
+<h1>Key difference: Scalar vs Indexed Constraint(23)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\textbf{Knapsack} &amp; \textbf{Warehouse Location} &amp;\\
+\max\limits_{x} \sum\limits_{i \in A} v_i x_i  &amp; \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp;\\
+s.t. \underline{\sum\limits_{i \in A}w_i x_i \leq W_{max}} &amp; s.t.\sum\limits_{w \in W} x_{w,c} = 1 &amp;\forall c \in C\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} &amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &amp;\forall w \in W, c \in C \\
+&amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &amp;\\
+\underline{w_{hammer}x_{hammer} + ... + w_{wrench}x_{wrench} \leq W_{max}}&amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 &amp; y \in \{0,1\}^{|W|} &amp;\\
+\end{array}$$</div><div class="line-block">
+<div class="line"><br /></div>
+</div>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">w\c</th>
+<th class="head">NYC</th>
+<th class="head">LA</th>
+<th class="head">Chicago</th>
+<th class="head">Houston</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Harlingen</td>
+<td>1956</td>
+<td>1606</td>
+<td>1410</td>
+<td>330</td>
+</tr>
+<tr class="row-odd"><td>Memphis</td>
+<td>1096</td>
+<td>1792</td>
+<td>531</td>
+<td>567</td>
+</tr>
+<tr class="row-even"><td>Ashland</td>
+<td>485</td>
+<td>2322</td>
+<td>324</td>
+<td>1236</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+$$\begin{array}
+x_{Har, NYC} + x_{Mem, NYC} + x_{Ash, NYC} = 1 &amp;&amp;\\
+x_{Har, LA}  + x_{Mem, LA}  + x_{Ash, LA}  = 1 &amp;&amp;\\
+x_{Har, Chi} + x_{Mem, Chi} + x_{Ash, Chi} = 1 &amp;&amp;\\
+x_{Har, Hou} + x_{Mem, Hou} + x_{Ash, Hou} = 1 &amp;&amp;\\
+\\
+\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="id1">
+
+<h1>Key difference: Scalar vs Indexed Constraint(23)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\textbf{Knapsack} &amp; \textbf{Warehouse Location} &amp;\\
+\max\limits_{x} \sum\limits_{i \in A} v_i x_i  &amp; \min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp;\\
+s.t.\sum\limits_{i \in A}w_i x_i \leq W_{max} &amp; s.t.\underline{\sum\limits_{w \in W} x_{w,c} = 1} &amp;\underline{\forall c \in C}\\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} &amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &amp;\forall w \in W, c \in C \\
+&amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &amp;\\
+w_{hammer}x_{hammer} + ... + w_{wrench}x_{wrench} \leq W_{max} &amp; \texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 &amp; y \in \{0,1\}^{|W|}\\
+\end{array}$$</div><table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">w\c</th>
+<th class="head">NYC</th>
+<th class="head">LA</th>
+<th class="head">Chicago</th>
+<th class="head">Houston</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Harlingen</td>
+<td>1956</td>
+<td>1606</td>
+<td>1410</td>
+<td>330</td>
+</tr>
+<tr class="row-odd"><td>Memphis</td>
+<td>1096</td>
+<td>1792</td>
+<td>531</td>
+<td>567</td>
+</tr>
+<tr class="row-even"><td>Ashland</td>
+<td>485</td>
+<td>2322</td>
+<td>324</td>
+<td>1236</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+$$\begin{array}{lll}
+\underline{x_{Har, NYC} + x_{Mem, NYC} + x_{Ash, NYC} = 1}&amp;&amp;\\
+\underline{x_{Har, LA} + x_{Mem, LA} + x_{Ash, LA} = 1}&amp;&amp;\\
+\underline{x_{Har, Chi} + x_{Mem, Chi} + x_{Ash, Chi} = 1}&amp;&amp;\\
+\underline{x_{Har, Hou} + x_{Mem, Hou} + x_{Ash, Hou} = 1}&amp;&amp;\\
+\\
+\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="key-difference-scalar-vs-indexed-constraint-24">
+
+<h1>Key difference: Scalar vs Indexed Constraint(24)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\textbf{Knapsack} &amp; \hspace{1cm}\textbf{Warehouse Location} &amp;\\
+\max\limits_{x} \sum\limits_{i \in A} v_i x_i  &amp; \hspace{1cm}\min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c} &amp;\\
+s.t. \underline{\sum\limits_{i \in A}w_i x_i \leq W_{max}} &amp; \hspace{1cm}s.t.\underline{\sum\limits_{w \in W} x_{w,c} = 1} &amp;\underline{\forall c \in C}\\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } x \in \{0,1\}^{|A|} &amp; \hspace{1cm}\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }x_{w,c} \leq y_w &amp;\forall w \in W, c \in C \\
+&amp;\hspace{1cm}\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\sum\limits_{w \in W} y_w = P &amp;\\
+&amp;\hspace{1cm}\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ } 0 \leq x \leq 1 &amp; y \in \{0,1\}^{|W|}\\
+\\
+\end{array}$$
+
+$$\begin{array}{llll}
+\mbox{* Knapsack problem: All constraints are singular (i.e., scalar)} &amp;&amp;&amp;\\
+\mbox{* Warehouse location problem:} &amp;&amp;&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\mbox{* Multiple constraints defined over indices}&amp;&amp;&amp;\\
+\mbox{* Pyomo used the concept of construction rules to specify } &amp;&amp;&amp;\\
+\mbox{  indexed constraints} &amp;&amp;&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="indexed-constraints-construction-rules-25">
+
+<h1>Indexed Constraints: Construction Rules(25)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\sum\limits_{w \in W} x_{w,c} = 1 &amp;\forall c \in C\\
+\end{array}$$
+
+$$\begin{array}{ll}
+\\
+\texttt{w = ['Harlinggen', 'Memphis', 'Ashland']}&amp;\\
+\texttt{C = ['NYC', 'LA', 'Chicago', 'Houston']}&amp;\\
+\texttt{model.x = pyo.Var(W, C, bounds=(0,1))}&amp;\\
+\texttt{model.y = Var(W, within=Binary)}&amp;\\
+\\
+\mbox{Particular index is passed as argument to the rule}&amp;\\
+\hspace{5cm}\Downarrow&amp;\\
+\texttt{def one_per_cust_rule}\underline{\texttt{(m, c):}}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return sum(m.x[w,c] for w in W) == 1}&amp;\\
+\texttt{model.one_per_cust = pyo.Constraint(C, }\underline{\texttt{rule=one_per_cust_rule)}}&amp;\\
+\hspace{8.5cm}\uparrow&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\mbox{For indexed constraints, you provide a ''rule'' (function) that}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\mbox{returns an expression (or tuple) for each index.}&amp;\\
+\\
+\textbf{Rule is called once for every entry in C!}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="construction-rules-multiple-indices-26">
+
+<h1>Construction Rules: Multiple indices(26)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+x_{w,c} \leq y_{w} &amp;\forall w \in W, c \in C\\
+\end{array}$$
+
+$$\begin{array}{ll}
+\\
+\texttt{w = ['Harlinggen', 'Memphis', 'Ashland']}&amp;\\
+\texttt{C = ['NYC', 'LA', 'Chicago', 'Houston']}&amp;\\
+\texttt{model.x = pyo.Var(W, C, bounds=(0,1))}&amp;\\
+\texttt{model.y = Var(W, within=Binary)}&amp;\\
+\\
+\\
+\mbox{Each dimension of the indices is a separate argument to the rule}&amp;\\
+\hspace{7cm}\Downarrow&amp;\\
+\texttt{def warehouse_active_rule(m, }\underline{\texttt{w, c):}}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return m.x[w,c] &lt;= m.y[w]}&amp;\\
+\texttt{model.warehouse_active = pyo.Constraint(W, C, rule=warehouse_active_rule)}&amp;\\
+\\
+\textbf{Rule is called once for every entry w in W crossed with every entry c in C!}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="construction-rules-complex-logic-27">
+
+<h1>Construction Rules: Complex logic(27)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+x_i = \left\{ \begin{array}{ll}
+                   cos(y_i)  &amp; \mbox{i even} \\
+                   sin(y_i)  &amp; \mbox{i odd}
+                   \end{array}
+      \right.     &amp; \forall \{ i \in N : i &lt;&gt; 0 \}\\
+\end{array}$$
+
+$$\begin{array}{ll}
+\\
+\texttt{def complex_rule(model, i):}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{if i == 0:}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return pyo.Constraint.Skip}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{elif i % 2 == 0:}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return model.x[i] == cos(model.y[i])}&amp;\\
+\texttt{ }\texttt{ }\texttt{ }\texttt{ }\texttt{return model.x[i] == sin(model.y[i])}&amp;\\
+\texttt{model.complex_constraint = pyo.Constraint(N, M, rule=complex_rule)}&amp;\\
+\\
+\textbf{Constraint rules can contain complex logic on the indices }&amp;\\
+\textbf{and other parameters, but NOT on the value of model variables.}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="more-on-construction-rules-28">
+
+<h1>More on Construction rules [28]</h1>
+
+<hr class="docutils" />
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Components are constructed in declaration order</dt>
+<dd><ul class="first last">
+<li>The instructions for how to construct the object are provided through a function, or rule</li>
+<li>Pyomo calls the rule for each component index</li>
+<li>Rules can be provided to virtually all Pyomo components</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Naming conventions</dt>
+<dd><ul class="first last">
+<li>the component name prepended with &quot;_&quot; (c4 -&gt; _c4)</li>
+<li>the component name with &quot;_rule&quot; appended (c4 -&gt; c4_rule)</li>
+<li>each rule is called &quot;rule&quot; (Python implicitly overrides each declaration)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Abstract models (discussed later) construct the model in two passes:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Python parses the model declaration</dt>
+<dd><ul class="first last">
+<li>creating &quot;empty&quot; Pyomo components in the model</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Pyomo loads and parses external data</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-29">
+
+<h1>Putting it all together: Warehouse Location(29)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+\mbox{* Determine the set of P warehouses} &amp;min \sum\limits_{w \in W, c \in C} d_{w,c}x_{w,c}&amp;\\
+\mbox{ chosen from the set  W of candidates } &amp;s.t. \sum\limits_{w \in W}x_{w,c} = 1 &amp;\forall c \in C\\
+\mbox{ to minimize the cost of serving all cus-} &amp;\hspace{1cm}x_{w,c} \leq y_{w}&amp;\forall w \in W, c \in C\\
+\mbox{ tomers C} &amp;\hspace{1cm}\sum\limits_{w \in W}y_w = P &amp;P = 2\\\\
+\mbox{* Here } d_{w,c} \mbox{ is the cost of serving cus-} &amp;\hspace{1cm}0 \leq x \leq 1&amp;y \in \{0,1\} ^{|W|}\\
+\mbox{ tomer c from warehouse at location w.}&amp;\\S
+\\
+\\
+\end{array}$$</div><div class="figure">
+<a class="reference internal image-reference" href="../_images/map.png"><img alt="../_images/map.png" src="../_images/map.png" style="width: 150pt; height: 100pt;" /></a>
+</div>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">w\c</th>
+<th class="head">NYC</th>
+<th class="head">LA</th>
+<th class="head">Chicago</th>
+<th class="head">Houston</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Harlingen</td>
+<td>1956</td>
+<td>1606</td>
+<td>1410</td>
+<td>330</td>
+</tr>
+<tr class="row-odd"><td>Memphis</td>
+<td>1096</td>
+<td>1792</td>
+<td>531</td>
+<td>567</td>
+</tr>
+<tr class="row-even"><td>Ashland</td>
+<td>485</td>
+<td>2322</td>
+<td>324</td>
+<td>1236</td>
+</tr>
+</tbody>
+</table>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-30">
+
+<h1>Putting It All Together:Warehouse Location [30]</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># warehouse_location.py: Warehouse location determination problem</span>
+<span class="hll"><span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ConcreteModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;(WL)&quot;</span><span class="p">)</span>
+<span class="n">W</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;Memphis&#39;</span><span class="p">,</span> <span class="s1">&#39;Ashland&#39;</span><span class="p">]</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NYC&#39;</span><span class="p">,</span> <span class="s1">&#39;LA&#39;</span><span class="p">,</span> <span class="s1">&#39;Chicago&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;NYC&#39;</span><span class="p">):</span> <span class="mi">1956</span><span class="p">,</span> \
+   <span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+   <span class="p">(</span><span class="s1">&#39;Ashland&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">):</span> <span class="mi">1236</span> <span class="p">}</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">obj_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">C</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">obj_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">one_per_cust_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">model</span><span class="o">.</span><span class="n">one_per_cust</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">one_per_cust_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">warehouse_active_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">warehouse_active</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">warehouse_active_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">num_warehouses_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">P</span>
+<span class="n">model</span><span class="o">.</span><span class="n">num_warehouses</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">num_warehouses_rule</span><span class="p">)</span>
+
+<span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-31">
+
+<h1>Putting It All Together:Warehouse Location(31)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># warehouse_location.py: Warehouse location determination problem</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="hll"><span class="n">model</span> <span class="o">=</span> <span class="n">ConcreteModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;(WL)&quot;</span><span class="p">)</span>
+</span><span class="n">W</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;Memphis&#39;</span><span class="p">,</span> <span class="s1">&#39;Ashland&#39;</span><span class="p">]</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NYC&#39;</span><span class="p">,</span> <span class="s1">&#39;LA&#39;</span><span class="p">,</span> <span class="s1">&#39;Chicago&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;NYC&#39;</span><span class="p">):</span> <span class="mi">1956</span><span class="p">,</span> \
+   <span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+   <span class="p">(</span><span class="s1">&#39;Ashland&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">):</span> <span class="mi">1236</span> <span class="p">}</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">obj_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">C</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">obj_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">one_per_cust_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">model</span><span class="o">.</span><span class="n">one_per_cust</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">one_per_cust_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">warehouse_active_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">warehouse_active</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">warehouse_active_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">num_warehouses_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">P</span>
+<span class="n">model</span><span class="o">.</span><span class="n">num_warehouses</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">num_warehouses_rule</span><span class="p">)</span>
+
+<span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-32">
+
+<h1>Putting It All Together : Warehouse Location(32)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># warehouse_location.py: Warehouse location determination problem</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ConcreteModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;(WL)&quot;</span><span class="p">)</span>
+<span class="n">W</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;Memphis&#39;</span><span class="p">,</span> <span class="s1">&#39;Ashland&#39;</span><span class="p">]</span>
+<span class="hll"><span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NYC&#39;</span><span class="p">,</span> <span class="s1">&#39;LA&#39;</span><span class="p">,</span> <span class="s1">&#39;Chicago&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">]</span>
+</span><span class="hll"><span class="n">d</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;NYC&#39;</span><span class="p">):</span> <span class="mi">1956</span><span class="p">,</span> \
+</span><span class="hll">   <span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+</span><span class="hll">   <span class="p">(</span><span class="s1">&#39;Ashland&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">):</span> <span class="mi">1236</span> <span class="p">}</span>
+</span><span class="hll"><span class="n">P</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="hll">
+</span><span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">obj_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">C</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">obj_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">one_per_cust_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">model</span><span class="o">.</span><span class="n">one_per_cust</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">one_per_cust_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">warehouse_active_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">warehouse_active</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">warehouse_active_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">num_warehouses_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">P</span>
+<span class="n">model</span><span class="o">.</span><span class="n">num_warehouses</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">num_warehouses_rule</span><span class="p">)</span>
+
+<span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-33">
+
+<h1>Putting It All Together : Warehouse Location(33)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+x_{w,c} &amp;\forall w \in W, c \in C\\
+y_{w} &amp;\forall w \in W\\
+\end{array}$$</div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># warehouse_location.py: Warehouse location determination problem</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ConcreteModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;(WL)&quot;</span><span class="p">)</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;Memphis&#39;</span><span class="p">,</span> <span class="s1">&#39;Ashland&#39;</span><span class="p">]</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NYC&#39;</span><span class="p">,</span> <span class="s1">&#39;LA&#39;</span><span class="p">,</span> <span class="s1">&#39;Chicago&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;NYC&#39;</span><span class="p">):</span> <span class="mi">1956</span><span class="p">,</span> \
+   <span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+   <span class="p">(</span><span class="s1">&#39;Ashland&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">):</span> <span class="mi">1236</span> <span class="p">}</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span><span class="p">)</span>
+<span class="hll">
+</span><span class="hll"><span class="k">def</span> <span class="nf">obj_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+</span>   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">C</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">obj_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">one_per_cust_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">model</span><span class="o">.</span><span class="n">one_per_cust</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">one_per_cust_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">warehouse_active_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">warehouse_active</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">warehouse_active_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">num_warehouses_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">P</span>
+<span class="n">model</span><span class="o">.</span><span class="n">num_warehouses</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">num_warehouses_rule</span><span class="p">)</span>
+
+<span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-34">
+
+<h1>Putting It All Together : Warehouse Location(34)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\min\limits_{x,y}\sum\limits_{w \in W, c \in C} d_{w,c} x_{w,c}&amp;\\
+\end{array}$$</div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># warehouse_location.py: Warehouse location determination problem</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">ConcreteModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;(WL)&quot;</span><span class="p">)</span>
+
+<span class="n">W</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;Memphis&#39;</span><span class="p">,</span> <span class="s1">&#39;Ashland&#39;</span><span class="p">]</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NYC&#39;</span><span class="p">,</span> <span class="s1">&#39;LA&#39;</span><span class="p">,</span> <span class="s1">&#39;Chicago&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;Harlingen&#39;</span><span class="p">,</span> <span class="s1">&#39;NYC&#39;</span><span class="p">):</span> <span class="mi">1956</span><span class="p">,</span> \
+   <span class="o">.</span> <span class="o">.</span> <span class="o">.</span>
+   <span class="p">(</span><span class="s1">&#39;Ashland&#39;</span><span class="p">,</span> <span class="s1">&#39;Houston&#39;</span><span class="p">):</span> <span class="mi">1236</span> <span class="p">}</span>
+<span class="n">P</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">model</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">Var</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">obj_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">C</span><span class="p">)</span>
+<span class="hll"><span class="n">model</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">Objective</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">obj_rule</span><span class="p">)</span>
+</span><span class="hll">
+</span><span class="hll"><span class="k">def</span> <span class="nf">one_per_cust_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+</span>   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">model</span><span class="o">.</span><span class="n">one_per_cust</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">one_per_cust_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">warehouse_active_rule</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+   <span class="k">return</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">w</span><span class="p">,</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span>
+<span class="n">model</span><span class="o">.</span><span class="n">warehouse_active</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">warehouse_active_rule</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">num_warehouses_rule</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+   <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">W</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">P</span>
+<span class="n">model</span><span class="o">.</span><span class="n">num_warehouses</span> <span class="o">=</span> <span class="n">Constraint</span><span class="p">(</span><span class="n">rule</span><span class="o">=</span><span class="n">num_warehouses_rule</span><span class="p">)</span>
+
+<span class="n">SolverFactory</span><span class="p">(</span><span class="s1">&#39;glpk&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="putting-it-all-together-warehouse-location-38">
+
+<h1>Putting It All Together:Warehouse Location(38)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># warehouse_location.py: Warehouse location determination problem</span>
+<span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ConcreteModel</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;(WL)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercise-2-40">
+
+<h1>Pyomo Fundamentals: Exercise #2 [40]</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{lll}
+&amp; \textbf{2.1 Knapsack problem with rules:}\mbox{ Rules are important than defining indexed }                        &amp; \\
+&amp; \hspace{1cm}\mbox{constraints, however, they can also be used for single (i.e. scalar) constraints.}               &amp; \\
+&amp; \hspace{1cm}\mbox{Starting with }\texttt{knapsack.py}\mbox{, reimplement the model using rules for the objective}  &amp; \\
+&amp; \hspace{1cm}\mbox{and the constraints. (A solution can be found in} \texttt{knapsack_rules_soln.py}\mbox{.)}       &amp; \\
+&amp; \textbf{2.2 Integer formulation of the knapsack problem:}\mbox{ Consider again, the knapsack}                      &amp; \\
+&amp; \hspace{1cm}\mbox{problem. Assume now that we can acquire multiple items of the same type. In this}                &amp; \\
+&amp; \hspace{1cm}\mbox{new formulation, x\_i is now an integer variable instead of a binary variable.}                  &amp; \\
+&amp; \hspace{1cm}\mbox{One way to formulate this problem is as follows:}                                                &amp; \\
+\end{array}$$
+
+$$\begin{array}{lll}
+  \max\limits_{q,x} &amp; \sum\limits_{i \in A} v_i x_i             &amp; \\
+  \mathrm{s.t.}        &amp; \sum\limits_{i \in A} w_i x_i \leq W_{max} &amp; \\
+                       &amp; x_i = \sum\limits_{j=0}^{N} j q_{i,j}          &amp; \hspace{0.5cm} \forall i \in A \\
+                       &amp; 0\leq x\leq N                                  &amp; \\
+                       &amp; q_{i,j} \in \{0,1\}                    &amp; \hspace{0.5cm} \forall i \in A, j \in \{0..N\} \\
+\end{array}$$
+
+$$\begin{array}{lll}
+&amp; \hspace{1cm}\mbox{Starting with }\texttt{knapsack_rules.py}\mbox{, implement this new formulation and solve.} &amp; \\
+&amp; \hspace{1cm}\mbox{Is the solution surprising? (A solution can be found in }\texttt{knapsack_integer_soln.py}\mbox{.)} &amp; \\
+&amp; \hspace{1cm}\mbox{} &amp; \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="parameters-43">
+
+<h1>Parameters(43)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Indexed numeric values}&amp;\\
+\texttt{model.a_param_vec = Param(IDX, initialize = data, default = 0)}&amp;\\
+\phantom{model.a_param_vec = Param(IDX, initialize }\uparrow\hspace{3cm}\uparrow&amp;\\
+\phantom{ize = data,}\mbox{''data'' must be a dictionary(*) of index keys}\hspace{1cm}\mbox{Providing ''default'' allows}&amp;\\
+\phantom{ize = data,}\mbox{to values because all sets are assumed to be }\hspace{1cm}\mbox{the initialization data to only}&amp;\\
+\phantom{ize = data,}\mbox{unordered} \hspace{6cm}\mbox{specify the ''unusual'' values}&amp;\\
+\phantom{ize = data,}\mbox{(*)-actually, it must define __getitem__(),}&amp;\\
+\phantom{ize = data,}\mbox{but that only really matters to Python geeks}&amp;\\
+\\
+\mbox{* Mutable Parameters} &amp;\\
+\texttt{model.a_parameter = Param(initialize = 42, mutable = True)} \\
+\hspace{10cm}\uparrow&amp;\\
+\hspace{7.5cm}\mbox{Indicates to Pyomo that you}&amp;\\
+\hspace{7.5cm}\mbox{may want to change this pa-}&amp;\\
+\hspace{7.5cm}\mbox{rameter later.}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="generating-and-managing-indices-sets-44">
+
+<h1>Generating and Managing Indices: Sets(44)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Any iterable object can be an index, e.g., lists:}&amp;\\
+\phantom{* A}\mbox{* IDX_a = [1,2,5]}&amp;\\
+\phantom{* A}\mbox{* DATA = {1: 10, 2: 21, 5:42};}&amp;\\
+\phantom{* A}\mbox{* IDX_b = DATA.keys()}&amp;\\
+&amp;\\
+\mbox{* Sets: objects for managing multidimensional indices}&amp;\\
+\phantom{* A}\texttt{* model.IDX = pyo.Set(initialize = [1,2,5])}&amp;\\
+\hspace{4.5cm}\uparrow\hspace{3.5cm}\uparrow&amp;\\
+\phantom{* model}\mbox{Note: capitalization matters:}\hspace{2cm}\mbox{Like indices, Sets can be}&amp;\\
+\phantom{* model}\mbox{Set = Pyomo class}\hspace{4cm}\mbox{initialized from any iterable}&amp;\\
+\phantom{* model}\mbox{Set = Native Python set}&amp;\\
+\phantom{* A}\texttt{* model.IDX = pyo.Set([1,2,5])}&amp;\\
+\hspace{4.5cm}\uparrow&amp;\\
+\hspace{2cm}\mbox{Note: This does not mean what you think it does.}&amp;\\
+\hspace{2cm}\mbox{This creates a 3-member indexed set, where each set is empty.}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="sequential-indices-rangeset-45">
+
+<h1>Sequential Indices: RangeSet(45)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Sets of sequential integers are common}&amp;\\
+\hspace{2ex}\texttt{* model.IDX = pyo.Set(initialize = range(5))}&amp;\\
+\hspace{8.5cm}\uparrow&amp;\\
+\hspace{7cm}\mbox{Note: Python range is 0-based.}&amp;\\
+\hspace{7cm}\mbox{This gives [0, 1, 2, 3, 4]}&amp;\\
+\hspace{2ex}\texttt{* model.IDX = pyo.RangeSet(5)}&amp;\\
+\hspace{5cm}\uparrow&amp;\\
+\hspace{3cm}\mbox{Note: RangeSet is 1-based.}&amp;\\
+\hspace{3cm}\mbox{This gives [1, 2, 3, 4, 5]}&amp;\\
+\\
+\mbox{* You can provide lower and upper bounds to RangeSet}&amp;\\
+\hspace{2ex}\texttt{model.IDX = pyo.RangeSet(0, 4)}&amp;\\
+\hspace{5cm}\uparrow&amp;\\
+\hspace{3cm}\mbox{This gives [0, 1, 2, 3, 4]}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="manipulating-sets-46">
+
+<h1>Manipulating Sets(46)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Creating sparse sets}&amp;\\
+\hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}&amp;\\
+\hspace{1cm}\texttt{def lower_tri_filter(model, i, j):}&amp;\\
+\hspace{3cm}\texttt{return j &lt;= i}&amp;\\
+\hspace{1cm}\texttt{model.LTRI = pyo.Set(initialize = model.IDX * model.IDX,}&amp;\\
+\hspace{5cm}\texttt{filter = lower_tri_filter)}&amp;\\
+\hspace{5.5cm}\uparrow&amp;\\
+\hspace{3.5cm}\mbox{The filter should return True if the element is in the set;}&amp;\\
+\hspace{3.5cm}\mbox{False otherwise.}&amp;\\
+\\
+\mbox{* Sets support efficient higher-dimensional indices}&amp;\\
+\hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}&amp;\\
+\hspace{1cm}\texttt{model.IDX2 = model.IDX * model.IDX}&amp;\\
+\hspace{3cm}\uparrow\hspace{4.5cm}\uparrow&amp;\\
+\hspace{1.5cm}\mbox{This creates a virtual}\hspace{1cm}\mbox{Sets also support union (&amp;), intersection (|),}&amp;\\
+\hspace{1.5cm}\mbox{2-D ''matri'' Set}\hspace{2cm}\mbox{difference(-), symmetric difference(^)}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="higher-dimensional-sets-and-flattening-47">
+
+<h1>Higher-Dimensional Sets and Flattening(47)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Higher-dimensional sets contain multiple indices per element}&amp;\\
+\hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}&amp;\\
+\hspace{1cm}\texttt{model.IDX2 = model.IDX * model.IDX}&amp;\\
+\hspace{1cm}\texttt{tuples = list()}&amp;\\
+\hspace{1cm}\texttt{for i in model.IDX:}&amp;\\
+\hspace{3cm}\texttt{for j in model.IDX:}&amp;\\
+\hspace{5cm}\texttt{tuples.append((i,j))}&amp;\\
+\hspace{1cm}\texttt{model.IDXT = pyo.Set(initialize=tuples)}&amp;\\
+\mbox{* IDX2 == IDXT == [(1,1),(1,2),(1,5),(2,1),(2,2),(2,5),(5,1),(5,2),(5,5)]}&amp;\\
+\mbox{*Higher-dimensional sets and rules}&amp;\\
+\hspace{2cm}\textbf{Each dimension of each index is }&amp;\\
+\hspace{2cm}\textbf{a separate argument to the rule}&amp;\\
+\hspace{5.5cm}\downarrow &amp;\\
+\hspace{1cm}\texttt{def c5_rule(model, i, j, k):}&amp;\\
+\hspace{3cm}\texttt{return model.a[i] + model.a[j] + model.a[k] &lt;= 1}&amp;\\
+\hspace{1cm}\texttt{model.c5 = pyo.Constraint(model.IDX2, model.IDX, rule=c5_rule)}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="set-ordering-48">
+
+<h1>Set ordering(48)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{By default, Sets are unordered (just like Python sets and dictionaries)}&amp;\\
+\hspace{1cm}\texttt{model.IDX = pyo.Set(initialize=[1,2,5])}\Longleftarrow\mbox{No specific order guaranteed for}&amp;\\
+\hspace{2cm}\texttt{print(i)}\hspace{5.5cm}\mbox{this loop (e.g.,1,5,2...5,1,2...)}&amp;\\
+\\
+\hspace{1cm}\texttt{model.x = Var(model.IDX)}&amp;\\
+\hspace{1cm}\texttt{for k in model.x:}\hspace{3cm}\Longleftarrow\mbox{This is also true for variables}&amp;\\
+\hspace{2cm}\texttt{print(value(model.x[i]))}\hspace{1.5cm}\mbox{indexed by unordered sets. }&amp;\\
+\\
+\hspace{1cm}\texttt{model.IDXO = pyo.Set(initialize=[1,2,5], ordered=True)}&amp;\\
+\hspace{10cm}\uparrow&amp;\\
+\hspace{8cm}\mbox{Use the keyword argument ordered=True}&amp;\\
+\hspace{8cm}\mbox{to guarantee fixed order.}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="other-modeling-components-49">
+
+<h1>Other Modeling Components [49]</h1>
+
+<hr class="docutils" />
+<ul class="simple">
+<li>Pyomo supports &quot;list&quot;-like indexed components (useful for meta-algorithms and additions of cuts)</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">Var</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">Var</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="n">Var</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span> <span class="o">=</span> <span class="n">ConstraintList</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">30</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">15</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span> <span class="mi">10</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">10</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">25</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span>  <span class="mi">5</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">add</span><span class="p">(</span> <span class="mi">6</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="mi">11</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">b</span> <span class="o">+</span>  <span class="mi">3</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">c</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="math">
+$$\begin{array}{l}
+model.a = Var() \\
+model.b = Var() \\
+model.c = Var() \\
+model.limits = ConstraintList() \\
+\\
+model.limits.add(30*model.a + 15*model.b + 10*model.c &lt;= 100) \\
+model.limits.add(10*model.a + 25*model.b +  5*model.c &lt;= 100)  \\
+model.limits.add( 6*model.a + 11*model.b +  3*model.c &lt;= 100)   \\
+\end{array}$$
+
+$$\begin{array}{l}
+\Uparrow \\
+\mbox{&quot;add&quot; adds a single new constraint to the list.} \\
+\mbox{The constraints need not be related.} \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="expression-performance-tips-50">
+
+<h1>Expression performance tips [50]</h1>
+
+<hr class="docutils" />
+<ul class="simple">
+<li>For reasons that are beyond this tutorial, the following can be VERY slow in Pyomo:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">INDEX</span><span class="p">:</span>
+    <span class="n">ans</span> <span class="o">=</span> <span class="n">ans</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Recommended alternatives are</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ans</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">INDEX</span><span class="p">:</span>
+    <span class="n">ans</span> <span class="o">+=</span> <span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">INDEX</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Note that this is likely to change in Pyomo 5.6, where all three forms will be relatively equivalent.</li>
+<li>To report the construction of individual Pyomo components, call:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pyomo</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">report_timing</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>before building your model.</p>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercises-3-51-1">
+
+<h1>Pyomo Fundamentals: Exercises #3(51)(1)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\textbf{3.1 Changing Parameter values: }\mbox{In the tutorial slides, we saw that a}&amp;\\
+\mbox{parameter could be specified to be }\texttt{mutable. }\mbox{This tells Pyomo that the}&amp;\\
+\mbox{value of the parameter may change in the future, and allows the user to}&amp;\\
+\mbox{change the parameter value and resolve the problem without the need}&amp;\\
+\mbox{to rebuild the entire model each time. We will use this functionality}&amp;\\
+\mbox{to find a better solution to an earlier exercise. Considering again the}&amp;\\
+\mbox{knapsack problem, we would like to find when the wrench becomes}&amp;\\
+\mbox{valuable enough to be a part of the optimal solution. Create a Pyomo}&amp;\\
+\texttt{Parameter }\mbox{for the value of the items, make it mutable, and then write}&amp;\\
+\mbox{a loop that prints the solution for different wrench values. Start with}&amp;\\
+\mbox{the file }\texttt{knapsack_mutable_parameter_incomplete.py. }\mbox{(A solution for}&amp;\\
+\mbox{this problem can be found in }\texttt{knapsack_mutable_parameter_incomplete.py.)}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercises-3-51-2">
+
+<h1>Pyomo Fundamentals: Exercises #3(51)(2)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\textbf{3.2 Integer cuts: }\mbox{Often, it can be important to find not only the &quot;best&quot;}&amp;\\
+\mbox{solution, but a number of solutions that are equally optimal, or close}&amp;\\
+\mbox{to optimal. For discrete optimization problems, this can be fine us-}&amp;\\
+\mbox{ing something know as an integer cut. Consider again the knapsack}&amp;\\
+\mbox{problem where the choice of which items to select is a discrete variable}&amp;\\
+x_i \texttt{ }\forall i \in A \mbox{. Let }x_i^* \mbox{ be a particular set of x values we want to remove}&amp;\\
+\mbox{from the feasible solution space. We define an integer cut using two}&amp;\\
+\mbox{sets. The first set }S_0 \mbox{ contain the indices for those variabels whose}&amp;\\
+\mbox{current solution is 0, and the second set }S_1 \mbox{ consists of indices for those}&amp;\\
+\mbox{variables whose current solution is 1. Given these two sets, an integer}&amp;\\
+\mbox{cur constraint that would prevent such a solution from appearing again}&amp;\\
+\mbox{is defined by, }\sum\limits_{i \in S_0}x[i] + \sum\limits_{i \in \in S_1}(1 - x[i]) \geq 1 &amp;\\
+\mbox{Starting with }\texttt{knapsack_rules.py}\mbox{, write a loop that solves the problem}&amp;\\
+\mbox{5 times, adding an integer cut to remove the previous solution at each}&amp;\\
+\mbox{iteration of the loop. (A solution for this problem can be found in}&amp;\\
+\texttt{knapsack_integer_cut_soln.py}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercises-3-52-1">
+
+<h1>Pyomo Fundamentals: Exercises #3(52)(1)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\textbf{3.3 Putting it all together with the lot sizing example: }\mbox{We will now}&amp;\\
+\mbox{write a complete model from scratch using a well-known multi-period}&amp;\\
+\mbox{optimization problem for optimal lot-sizing adapted from Hagen el al.}&amp;\\
+\mbox{(2001) shown below.}&amp;\\
+\end{array}$$
+
+$$\begin{array}{lll}
+min \sum\limits_{t \in T}c_ty_t + h_t^+I_t^+ + h_t^-I_t^- &amp;&amp;\mbox{(1)}\\
+\hspace{2.5cm}s.t. I_t = I_{t-1} + X_t - d_t &amp; \forall t \in T &amp; \mbox{(2)}\\
+\hspace{3cm}I_t = I_t^+ - I_t^- &amp; \forall t \in T &amp; \mbox{(3)}\\
+\hspace{3cm}X_t \leq P_{yt} &amp; \forall t \in T &amp;\mbox{(4)}\\
+\hspace{3cm}X_t, I_t^+, I_t^- \geq 0 &amp; \forall t \in T &amp; \mbox{(5)} \\
+\hspace{3cm}y_t \in {0,1} &amp; \forall t \in T &amp; \mbox{(6)} \\
+\end{array}$$
+
+$$\begin{array}{ll}
+\mbox{Our goal is to find the optimal prpduction }X_t\mbox{ given know demands}&amp;\\
+d_t\mbox{, fixed cost }c_t\mbox{ associated with active production in a particular time}&amp;\\
+\mbox{period, an inventory holding cost }h_t^+ \mbox{ and a shortage cost } h_t^- \mbox{ (cost of}&amp;\\
+\mbox{keeping a backlog) of orders. The variable y\_t (binary) determines if we}&amp;\\
+\mbox{produce in time t or not, and } I_t^+ \mbox{ represents inventory that we are storing}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="pyomo-fundamentals-exercises-3-52-2">
+
+<h1>Pyomo Fundamentals: Exercises #3(52)(2)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{across time period t, while } I_t^- \mbox{ represents the magnitude of the backlog.}&amp;\\
+\mbox{Note that equation (4) is a constraint that only allows production in}&amp;\\
+\mbox{time period t if the indicator variable } y_t = 1.&amp;\\
+\mbox{Write a Pyomo model for this problem and solve it using }\texttt{glpk}\mbox{ using the}&amp;\\
+\mbox{data provided below. You can start with the file }\texttt{lot\_sizing\_incomplete.py.}&amp;\\
+\mbox{(A solution is provided in }\texttt{lot\_sizing\_soln.py.)} &amp;\\
+\end{array}$$
+
+$$\begin{array}{lll}
+\textbf{Parameter}&amp;\textbf{Description}&amp;\textbf{Value}\\
+c &amp;\mbox{fixed cost of production} &amp;4.6\\
+I_0^+ &amp;\mbox{initial value of positive inventory} &amp;5.0 \\
+I_0^- &amp;\mbox{initial value of backlogged orders} &amp;0.0 \\
+h^+ &amp;\mbox{cost(per unit) of holding inventory} &amp;0.7 \\
+h^- &amp;\mbox{shortage cost (per unit)} &amp;1.2 \\
+P &amp;\mbox{maximum production amount (big-M) value} &amp;5 \\
+d &amp;\mbox{demand} &amp;[5,7,6.2,3.1,1.7]\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="other-topics-53">
+
+<h1>Other Topics(53)</h1>
+
+
+
+
+
+</article><hr class="docutils" />
+
+<article class="slide level-1" id="solving-models-the-pyomo-command-54">
+
+<h1>Solving models: the pyomo command(54)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* pyomo(pyomo.exe on Windows):}&amp;\\
+\hspace{1cm}\mbox{* Constructs model and passes it to an (external) solver}&amp;\\
+\hspace{2cm}\texttt{pyomo solve &lt;model\_file&gt; [&lt;data\_file&gt; ] [options]}&amp;\\
+\hspace{1cm}\mbox{* Installed to:}&amp;\\
+\end{array}$$</div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">PYTHONHOME</span><span class="p">]</span>\<span class="n">Scripts</span>         <span class="p">[</span><span class="n">Windows</span><span class="p">;</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Python27</span>\<span class="n">Scripts</span><span class="p">]</span>
+<span class="p">[</span><span class="n">PYTHONHOME</span><span class="p">]</span><span class="o">/</span><span class="nb">bin</span>     <span class="p">[</span><span class="n">Linux</span><span class="p">;</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Key options (many others; see --help)}&amp;\\
+\end{array}$$
+
+$$\begin{array}{ll}
+\mbox{--help}&amp;\mbox{Get list of all options}\\
+\mbox{--help-solvers}&amp;\mbox{Get the list of all recognized solvers}\\
+\mbox{--solver=&lt;solver\_name&gt;}&amp;\mbox{Set the solver that Pyomo will invoke}\\
+\mbox{--solver-options=&quot;key=value[...]&quot;}&amp;\mbox{Specify options to pass to the solver as a space-}\\
+&amp;\mbox{separated list of keyword-value pairs}\\
+\mbox{--stream-solver}&amp;\mbox{Display the solver output during the solve}\\
+\mbox{--summary}&amp;\mbox{Display a summary of the optimization result}\\
+\mbox{--report-timing}&amp;\mbox{Report additional timing information, including}\\
+&amp;\mbox{construction time for each model component}\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="abstract-modeling-55">
+
+<h1>Abstract Modeling(55)</h1>
+
+
+
+
+
+</article><hr class="docutils" />
+
+<article class="slide level-1" id="concrete-vs-abstract-models-56">
+
+<h1>Concrete vs. Abstract Models(56)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Concrete Models: data first, then model}&amp;\\
+\hspace{1cm}\mbox{* 1-pass construction}&amp;\\
+\hspace{1cm}\mbox{* All data must be present before Python starts processing the model}&amp;\\
+\hspace{1cm}\mbox{Pyomo will construct each component in order at the time it is declared}&amp;\\
+\hspace{1cm}\mbox{Straightforward logical process; easy to script.}&amp;\\
+\hspace{1cm}\mbox{Familiar to modelers with experience with GAMS}&amp;\\
+\mbox{* Abstract Models: model first, then data}&amp;\\
+\hspace{1cm}\mbox{* 2-pass construction}&amp;\\
+\hspace{1cm}\mbox{* Pyomo stores the basic model declarations, but does not construct the actual objects}&amp;\\
+\hspace{2cm}\mbox{* Details on how to construct the component hidden in functions, or rules}&amp;\\
+\hspace{2cm}\mbox{* e.g., it will declare an indexed variable &quot;x&quot;, but will not expand the indices or}&amp;\\
+\hspace{2.5cm}\mbox{populate any of the individual variable values.}&amp;\\
+\mbox{* At &quot;creation time&quot;, data is applied to the abstract declaration to create a concrete}&amp;\\
+\hspace{1cm}\mbox{instance (components are still constructed in declaration order)}&amp;\\
+\mbox{* Encourages generic modeling and model reuse}&amp;\\
+\hspace{1cm}\mbox{* e.g., model can be used for arbitrary-sized inputs}&amp;\\
+\mbox{* Familiar to modelers with experience with AMPL}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 87.5px; height: 40.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="data-sources-57">
+
+<h1>Data Sources(57)</h1>
+
+<hr class="docutils" />
+<div class="math">
+$$\begin{array}{ll}
+\mbox{* Data can be imported from &quot;.dat&quot; file}&amp;\\
+\hspace{1cm}\mbox{* Format similar to AMPL style}&amp;\\
+\hspace{1cm}\mbox{* Explicit data from &quot;param&quot; declarations}&amp;\\
+\hspace{1cm}\mbox{* External data through &quot;load&quot; declarations:}&amp;\\
+\hspace{2cm}\mbox{* Excel}&amp;\\
+\hspace{2cm}\texttt{load ABCD.xls range=ABCD : Z=[A, B, C] Y=D ;}&amp;\\
+\hspace{2cm}\mbox{* Databases}&amp;\\
+\hspace{2cm}\texttt{load &quot;DBQ=diet.mdb&quot; using=pyodbc query=&quot;SELECT FOOD,}&amp;\\
+\hspace{2cm}\texttt{cost, f\_min, f\_max from Food&quot; : [FOOD] cost f\_min f\_max ;}&amp;\\
+\\
+\mbox{* External data overrides &quot;initialize=&quot; declarations}&amp;\\
+\end{array}$$</div><a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="abstract-p-median-pmedian-py-1-58">
+
+<h1>Abstract p-Median (pmedian.py, 1)(58)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="n">pyo</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">AbstractModel</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">within</span><span class="o">=</span><span class="n">PositiveIntegers</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">within</span><span class="o">=</span><span class="n">RangeSet</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">N</span> <span class="p">)</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">within</span><span class="o">=</span><span class="n">PositiveIntegers</span> <span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">Locations</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">RangeSet</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">N</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Customers</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">RangeSet</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">M</span> <span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">Customers</span> <span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">Customers</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span> <span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="abstract-p-median-pmedian-py-2-59">
+
+<h1>Abstract p-Median (pmedian.py, 2)(59)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">obj_rule</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">Customers</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Objective</span><span class="p">(</span> <span class="n">rule</span><span class="o">=</span><span class="n">obj_rule</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">single_x_rule</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span> <span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span>
+<span class="n">model</span><span class="o">.</span><span class="n">single_x</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">Customers</span><span class="p">,</span> <span class="n">rule</span><span class="o">=</span><span class="n">single_x_rule</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">bound_y_rule</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.0</span>
+<span class="n">model</span><span class="o">.</span><span class="n">bound_y</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">Customers</span><span class="p">,</span>
+                            <span class="n">rule</span><span class="o">=</span><span class="n">bound_y_rule</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">num_facilities_rule</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">Locations</span> <span class="p">)</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">P</span>
+<span class="n">model</span><span class="o">.</span><span class="n">num_facilities</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span> <span class="n">rule</span><span class="o">=</span><span class="n">num_facilities_rule</span> <span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="abstract-p-median-pmedian-dat-60">
+
+<h1>Abstract p-Median (pmedian.dat)(60)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">param</span> <span class="n">N</span> <span class="p">:</span><span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="n">param</span> <span class="n">M</span> <span class="p">:</span><span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+<span class="n">param</span> <span class="n">P</span> <span class="p">:</span><span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+<span class="n">param</span> <span class="n">d</span><span class="p">:</span>  <span class="mi">1</span>     <span class="mi">2</span>     <span class="mi">3</span>     <span class="mi">4</span> <span class="p">:</span><span class="o">=</span>
+     <span class="mi">1</span>   <span class="mf">1.7</span>   <span class="mf">7.2</span>   <span class="mf">9.0</span>   <span class="mf">8.3</span>
+     <span class="mi">2</span>   <span class="mf">2.9</span>   <span class="mf">6.3</span>   <span class="mf">9.8</span>   <span class="mf">0.7</span>
+     <span class="mi">3</span>   <span class="mf">4.5</span>   <span class="mf">4.8</span>   <span class="mf">4.2</span>   <span class="mf">9.3</span> <span class="p">;</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="in-class-exercise-abstract-knapsack-61">
+
+<h1>In Class Exercise: Abstract Knapsack(61)</h1>
+
+<hr class="docutils" />
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Item</th>
+<th class="head">Weight</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>hammer</td>
+<td>5</td>
+<td>8</td>
+</tr>
+<tr class="row-odd"><td>wrench</td>
+<td>7</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>screwdriver</td>
+<td>4</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>towel</td>
+<td>3</td>
+<td>11</td>
+</tr>
+<tr class="row-even"><td>Max weight:</td>
+<td>14</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<div class="math">
+$$\begin{array}{lll}
+\max          &amp; \sum\limits_{i = 1}^N v_ix_i                    &amp;\\
+\mbox{s.t.} &amp; \sum\limits_{i = 1}^N w_ix_i \leq W_{max} &amp;\\
+              &amp;  x_i \in \{0,1\} &amp;\\
+\end{array}$$
+
+$$\begin{array}{ll}
+\mbox{Syntax reminders:} &amp; \\
+\texttt{AbstractModel()} &amp; \\
+\texttt{Set( [index, ...], [initialize=list/function] )} &amp; \\
+\texttt{Param( [index, ...], [within=domain], [initialize=dict/function] )} &amp; \\
+\texttt{Var( [index, ...], [within=domain], [bounds=(lower,upper)] )} &amp; \\
+\texttt{Constraint( [index, ...], [expr=expression|rule=function] )} &amp; \\
+\end{array}$$</div>
+
+
+
+</article>
+<article class="slide level-1" id="abstract-knapsack-solution-62">
+
+<h1>Abstract Knapsack:  Solution(62)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyomo.environ</span> <span class="kn">import</span> <span class="n">pyo</span>
+
+<span class="n">model</span>       <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">AbstractModel</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">ITEMS</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Set</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">v</span>     <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">ITEMS</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">PositiveReals</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">w</span>     <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">ITEMS</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">PositiveReals</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">W_max</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span> <span class="n">within</span><span class="o">=</span><span class="n">PositiveReals</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">x</span>     <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">ITEMS</span><span class="p">,</span> <span class="n">within</span><span class="o">=</span><span class="n">Binary</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">value_rule</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">ITEMS</span> <span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Objective</span><span class="p">(</span> <span class="n">rule</span><span class="o">=</span><span class="n">value_rule</span><span class="p">,</span> <span class="n">sense</span><span class="o">=</span><span class="n">maximize</span> <span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">weight_rule</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">model</span><span class="o">.</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">ITEMS</span> <span class="p">)</span> \
+        <span class="o">&lt;=</span> <span class="n">model</span><span class="o">.</span><span class="n">W_max</span>
+<span class="n">model</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">pyo</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span> <span class="n">rule</span><span class="o">=</span><span class="n">weight_rule</span> <span class="p">)</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+<article class="slide level-1" id="abstract-knapsack-solution-data-63">
+
+<h1>Abstract Knapsack:  Solution Data(63)</h1>
+
+<hr class="docutils" />
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nb">set</span> <span class="n">ITEMS</span> <span class="p">:</span><span class="o">=</span> <span class="n">hammer</span> <span class="n">wrench</span> <span class="n">screwdriver</span> <span class="n">towel</span> <span class="p">;</span>
+
+<span class="n">param</span><span class="p">:</span>  <span class="n">v</span> <span class="n">w</span> <span class="p">:</span><span class="o">=</span>
+    <span class="n">hammer</span>        <span class="mi">8</span> <span class="mi">5</span>
+    <span class="n">wrench</span>        <span class="mi">3</span> <span class="mi">7</span>
+    <span class="n">screwdriver</span>   <span class="mi">6</span> <span class="mi">4</span>
+    <span class="n">towel</span>        <span class="mi">11</span> <span class="mi">3</span><span class="p">;</span>
+
+<span class="n">param</span> <span class="n">W_max</span> <span class="p">:</span><span class="o">=</span> <span class="mi">14</span><span class="p">;</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/pyomo.png"><img alt="alternate text" class="align-right" src="../_images/pyomo.png" style="width: 100.0px; height: 50.0px;" /></a>
+
+
+
+
+</article>
+
+</section>
+
+<section id="slide_notes">
+
+</section>
+
+  </body>
+</html>

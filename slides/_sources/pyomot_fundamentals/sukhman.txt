@@ -1,0 +1,320 @@
+Syntax 
+=======
+-------
+
+.. |logo| image:: /_static/pyomo.png
+    :width: 70pt
+    :height: 50pt
+
+
+
+|logo| can be used in different slides with same customization
+
+| 
+
+Figures can have captions, images cannot
+Figure out add image in latex!
+
+
+Populating the Model : *Variables* [9a]
+=========================================
+-----------------------------------------
+
+.. code-block:: python
+
+   model.a_variable = pyo.Var(within = NonNegativeReals)
+
+.. role:: python(code)
+    :language: python
+
+:class:`a_variable`     
+| 
+The name you assign the object to becomes the object's name, and must be unique in any given model
+
+
+:class:`within`     
+| 
+"within" is optional and sets the variable domain ("domain" is an alias for "within")
+|
+Components can take a variety of keyword arguments when constructed.
+
+
+:class:`NonNegativeReals`     
+| 
+Several pre-defined domains, e.g., "Binary"
+
+Populating the Model : *Variables* [9a1]
+==========================================
+------------------------------------------
+
+.. code-block:: python
+
+   model.a_variable = pyo.Var(within = NonNegativeReals)
+
+.. figure:: /_static/redline.png
+   :width: 110px
+
+| 
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \texttt{model.a\_variable = pyo.Var(within = NonNegativeReals)} & & \\
+   \hspace{3cm} \Uparrow & & \\
+   \mbox{The name you assign the object to } & & \\
+   \mbox{becomes the object's name, and } & & \\
+   \mbox{must be unique in any given model} & & \\
+   \end{array}$$
+
+
+Populating the Model : *Variables* [9a2]
+==========================================
+------------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \texttt{model.a\_variable = pyo.Var(within = NonNegativeReals)} & & \\
+   \hspace{8cm}\Uparrow & & \\
+   \hspace{5cm}\mbox{"within" is optional and } & & \\
+   \hspace{5cm}\mbox{sets the variable domain } & & \\
+   \hspace{5cm}\mbox{("domain" is an alias for "within")} & & \\
+   \hspace{5cm}\mbox{Components can take a variety of } & & \\
+   \hspace{5cm}\mbox{keyword arguments when constructed.} & & \\
+   \end{array}$$
+
+Populating the Model : *Variables* [9a3]
+=========================================
+-----------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \texttt{model.a\_variable = pyo.Var(within = NonNegativeReals)} & & \\
+   \hspace{11.5cm}\Uparrow & & \\
+   \hspace{9cm}\mbox{ Several pre-defined domains, } & & \\
+   \hspace{10.7cm}\mbox{ e.g., "Binary" } & & \\
+   \end{array}$$
+
+
+Populating the Model : *Variables* [10]
+========================================
+----------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{l}
+   \hspace{1.6cm}\mbox{Components can take a variety of keyword arguments when constructed.} \\
+   \hspace{9.5cm} \Downarrow \\
+   \end{array}$$
+
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{l}
+   \texttt{model.a\_variable = pyo.Var( within = NonNegativeReals) }
+   \end{array}$$
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   \hspace{4cm}\Uparrow 			& \hspace{3.5cm}\Uparrow 			& \hspace{2cm}\Uparrow \\
+   \hspace{0.5cm}\mbox{The name you assign the} & \hspace{0.5cm}\mbox{"within" is optional and} & \hspace{0.5cm}\mbox{Several pre-defined domains,} \\
+   \hspace{0.5cm}\mbox{object to becomes the}   & \hspace{0.5cm}\mbox{sets the variable domain} & \hspace{0.5cm} \mbox{e.g., "Binary"  }\\
+   \hspace{0.5cm}\mbox{object's name, and must} & \hspace{0.5cm}\mbox{("domain" is an alias }   &  \\
+   \hspace{0.5cm}\mbox{be unique in any given}  & \hspace{0.5cm}\mbox{for "within")} 	        &  \\
+   \hspace{0.5cm}\mbox{ model}                  & 	      				        &  \\
+   \end{array}$$
+
+| 
+| 
+
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{l}
+   \texttt{model.a\_variable = pyo.Var( bounds = (0, None) )} \\
+   \texttt{model.a\_variable = pyo.Var( initialize = 42.0 )} \\
+   \texttt{model.a\_variable = pyo.Var( initialize = 42.0 , bounds = (0, None) )} \\
+   \end{array}$$
+
+
+List Comprehensions [14]
+=========================
+-------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{l}
+   \texttt{model.IDX = range(10) } \\
+   \texttt{model.a = pyo.Var() } \\
+   \texttt{model.b = pyo.Var( model.IDX )} \\
+   \texttt{model.c1 = pyo. Constraint( } \\
+   \texttt{ }\texttt{ }\texttt{ expr = sum(model.b[i] for i in model.IDX <= model.a )} \\
+   \end{array}$$
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{l}
+   \hspace{4.5cm}\Uparrow \\
+   \mbox{ Python list comprehensions are very common for working over} \\
+   \mbox{ indexed variables and nicely parallel mathematical notation:} \sum\limits_{ i \in IDX} b_i \leq a \\
+   \end{array}$$
+
+
+Putting it all together: Concrete Knapsack [15]
+=================================================
+-------------------------------------------------
+
+.. figure:: /_static/15.png
+   :width: 178pt
+
+
+.. code-block:: python
+
+    # knapsack.py
+    from pyomo.environ import pyo
+
+    A = {'hammer', 'wrench', 'screwdriver', 'towel'}
+    b = {'hammer':8, 'wrench':3, 'screwdriver':6, 'towel':11}
+    w = {'hammer':5, 'wrench':7, 'screwdriver':4, 'towel':3}
+    W_max = 14
+
+    model = pyo.ConcreteModel()
+
+    model.x = pyo.Var( A, within=Binary )
+    model.value = pyo.Objective(
+       expr = sum( b[i]*model.x[i] for i in A),
+       sense = maximize )
+
+    model.weight = pyo.Constraint( 
+        expr = sum( w[i]*model.x[i] for i in A) <= W_max ))
+
+    opt = pyo.SolverFactory('glpk')
+
+    result_obj = pyo.opt.solve(model, tee=True)
+
+    model.pprint()
+
+
+
+
+Pyomo Fundamentals: Exercise #2 [40]
+=====================================
+-------------------------------------
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{lll}
+   & \textbf{2.1 Knapsack problem with rules:}\mbox{ Rules are important than defining indexed } 			& \\
+   & \hspace{1cm}\mbox{constraints, however, they can also be used for single (i.e. scalar) constraints.} 		& \\
+   & \hspace{1cm}\mbox{Starting with }\texttt{knapsack.py}\mbox{, reimplement the model using rules for the objective}  & \\
+   & \hspace{1cm}\mbox{and the constraints. (A solution can be found in} \texttt{knapsack\_rules\_soln.py}\mbox{.)}	& \\
+   & \textbf{2.2 Integer formulation of the knapsack problem:}\mbox{ Consider again, the knapsack} 			& \\
+   & \hspace{1cm}\mbox{problem. Assume now that we can acquire multiple items of the same type. In this} 		& \\  
+   & \hspace{1cm}\mbox{new formulation, x\_i is now an integer variable instead of a binary variable.} 			& \\  
+   & \hspace{1cm}\mbox{One way to formulate this problem is as follows:} 						& \\   
+   \end{array}$$
+ 
+   $$\begin{array}{lll}
+     \max\limits_{q,x} & \sum\limits_{i \in A} v_i x_i 		   & \\
+     \mathrm{s.t.} 	  & \sum\limits_{i \in A} w_i x_i \leq W_{max} & \\
+     			  & x_i = \sum\limits_{j=0}^{N} j q_{i,j}	   & \hspace{0.5cm} \forall i \in A \\
+			  & 0\leq x\leq N 				   & \\
+			  & q_{i,j} \in \{0,1\}			   & \hspace{0.5cm} \forall i \in A, j \in \{0..N\} \\
+   \end{array}$$
+     
+   $$\begin{array}{lll}
+   & \hspace{1cm}\mbox{Starting with }\texttt{knapsack_rules.py}\mbox{, implement this new formulation and solve.} & \\
+   & \hspace{1cm}\mbox{Is the solution surprising? (A solution can be found in }\texttt{knapsack\_integer\_soln.py}\mbox{.)} & \\
+   & \hspace{1cm}\mbox{} & \\
+   \end{array}$$
+
+
+Other Modeling Components [49]
+===============================
+-------------------------------
+
+* Pyomo supports "list"-like indexed components (useful for meta-algorithms and additions of cuts)
+.. code-block:: python
+
+   model.a = Var()
+   model.b = Var()
+   model.c = Var()
+   model.limits = ConstraintList()
+   model.limits.add(30*model.a + 15*model.b + 10*model.c <= 100)
+   model.limits.add(10*model.a + 25*model.b +  5*model.c <= 100)
+   model.limits.add( 6*model.a + 11*model.b +  3*model.c <= 100) 
+
+.. math::
+   :nowrap:
+
+   $$\begin{array}{l}
+   model.a = Var() \\
+   model.b = Var() \\
+   model.c = Var() \\
+   model.limits = ConstraintList() \\
+   \\
+   model.limits.add(30*model.a + 15*model.b + 10*model.c <= 100) \\
+   model.limits.add(10*model.a + 25*model.b +  5*model.c <= 100)  \\
+   model.limits.add( 6*model.a + 11*model.b +  3*model.c <= 100)   \\
+   \end{array}$$
+
+   $$\begin{array}{l}
+   \Uparrow \\
+   \mbox{"add" adds a single new constraint to the list.} \\
+   \mbox{The constraints need not be related.} \\
+   \end{array}$$
+
+
+Expression performance tips [50]
+=================================
+---------------------------------
+
+* For reasons that are beyond this tutorial, the followinf can be VERY slow in Pyomo:
+.. code-block:: python
+
+     ans = 0
+     for i in m.INDEX:
+         ans = ans + m.x[i]
+
+* Recommended alternatives are
+.. code-block:: python
+
+     ans = 0
+     for i in m.INDEX:
+         ans += m.x[i]
+
+.. code-block:: python
+
+   sum(m.x[i] for i in m.INDEX)
+
+* Note that this is likely to change in Pyomo 5.6, where all three forms will be relatively equivalent.
+
+* To report the construction of individual Pyomo components, call:
+.. code-block:: python
+
+  pyomo.util.timing.report_timing()
+
+before building your model.
+
+
+
+
+
+
+
+
+
+
+
